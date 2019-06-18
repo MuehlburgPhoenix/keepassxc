@@ -60,9 +60,6 @@ protected slots:
     void reject();
 
 private slots:
-    void activatePassword();
-    void activateKeyFile();
-    void activateChallengeResponse();
     void browseKeyFile();
     void yubikeyDetected(int slot, bool blocking);
     void yubikeyDetectComplete();
@@ -72,6 +69,7 @@ protected:
     const QScopedPointer<Ui::DatabaseOpenWidget> m_ui;
     QSharedPointer<Database> m_db;
     QString m_filename;
+    bool m_retryUnlockWithEmptyPassword = false;
 
 private:
     bool m_yubiKeyBeingPolled = false;
