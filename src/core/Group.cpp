@@ -43,6 +43,7 @@ Group::Group()
     m_data.iconNumber = DefaultIconNumber;
     m_data.isExpanded = true;
     m_data.autoTypeEnabled = Inherit;
+    m_data.defaultExpirationPeriodEnabled = Inherit;
     m_data.searchingEnabled = Inherit;
     m_data.mergeMode = Default;
 
@@ -236,6 +237,16 @@ Group::TriState Group::autoTypeEnabled() const
     return m_data.autoTypeEnabled;
 }
 
+TimeDelta Group::defaultExpirationPeriod() const
+{
+    return m_data.defaultExpirationPeriod;
+}
+
+Group::TriState Group::defaultExpirationPeriodEnabled() const
+{
+    return m_data.defaultExpirationPeriodEnabled;
+}
+
 Group::TriState Group::searchingEnabled() const
 {
     return m_data.searchingEnabled;
@@ -386,6 +397,16 @@ void Group::setDefaultAutoTypeSequence(const QString& sequence)
 void Group::setAutoTypeEnabled(TriState enable)
 {
     set(m_data.autoTypeEnabled, enable);
+}
+
+void Group::setDefaultExpirationPeriod(const TimeDelta& period)
+{
+    m_data.defaultExpirationPeriod = period;
+}
+
+void Group::setDefaultExpirationPeriodEnabled(TriState enable)
+{
+    set(m_data.defaultExpirationPeriodEnabled, enable);
 }
 
 void Group::setSearchingEnabled(TriState enable)

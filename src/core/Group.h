@@ -27,6 +27,7 @@
 #include "core/CustomData.h"
 #include "core/Database.h"
 #include "core/Entry.h"
+#include "core/TimeDelta.h"
 #include "core/TimeInfo.h"
 
 class Group : public QObject
@@ -69,6 +70,8 @@ public:
         bool isExpanded;
         QString defaultAutoTypeSequence;
         Group::TriState autoTypeEnabled;
+        TimeDelta defaultExpirationPeriod;
+        Group::TriState defaultExpirationPeriodEnabled;
         Group::TriState searchingEnabled;
         Group::MergeMode mergeMode;
 
@@ -96,6 +99,8 @@ public:
     QString defaultAutoTypeSequence() const;
     QString effectiveAutoTypeSequence() const;
     Group::TriState autoTypeEnabled() const;
+    TimeDelta defaultExpirationPeriod() const;
+    Group::TriState defaultExpirationPeriodEnabled() const;
     Group::TriState searchingEnabled() const;
     Group::MergeMode mergeMode() const;
     bool resolveSearchingEnabled() const;
@@ -131,6 +136,8 @@ public:
     void setExpanded(bool expanded);
     void setDefaultAutoTypeSequence(const QString& sequence);
     void setAutoTypeEnabled(TriState enable);
+    void setDefaultExpirationPeriod(const TimeDelta& period);
+    void setDefaultExpirationPeriodEnabled(TriState enable);
     void setSearchingEnabled(TriState enable);
     void setLastTopVisibleEntry(Entry* entry);
     void setExpires(bool value);
