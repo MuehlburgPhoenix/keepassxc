@@ -93,6 +93,8 @@ EditGroupWidget::EditGroupWidget(QWidget* parent)
     connect(m_editGroupWidgetIcons, SIGNAL(messageEditEntryDismiss()), SLOT(hideMessage()));
 
     setupModifiedTracking();
+
+    m_mainUi->defaultExpirationPeriodPresetsButton->setMenu(createDefaultExpirationPeriodPresetsMenu());
 }
 
 EditGroupWidget::~EditGroupWidget()
@@ -106,6 +108,10 @@ void EditGroupWidget::setupModifiedTracking()
     connect(m_mainUi->editNotes, SIGNAL(textChanged()), SLOT(setModified()));
     connect(m_mainUi->expireCheck, SIGNAL(stateChanged(int)), SLOT(setModified()));
     connect(m_mainUi->expireDatePicker, SIGNAL(dateTimeChanged(QDateTime)), SLOT(setModified()));
+    connect(m_mainUi->defaultExpirationPeriodComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
+    connect(m_mainUi->defaultExpirationPeriodComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SLOT(updateExpirationPeriodWidgets(int)));
     connect(m_mainUi->searchComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autotypeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autoTypeSequenceInherit, SIGNAL(toggled(bool)), SLOT(setModified()));
@@ -114,6 +120,25 @@ void EditGroupWidget::setupModifiedTracking()
 
     // Icon tab
     connect(m_editGroupWidgetIcons, SIGNAL(widgetUpdated()), SLOT(setModified()));
+}
+
+QMenu* EditGroupWidget::createDefaultExpirationPeriodPresetsMenu()
+{
+    auto* expirePresetsMenu = new QMenu(this);
+    expirePresetsMenu->addAction(tr("%n day(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromDays(1)));
+    expirePresetsMenu->addSeparator();
+    expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromDays(7)));
+    expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 2))->setData(QVariant::fromValue(TimeDelta::fromDays(14)));
+    expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 3))->setData(QVariant::fromValue(TimeDelta::fromDays(21)));
+    expirePresetsMenu->addSeparator();
+    expirePresetsMenu->addAction(tr("%n month(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromMonths(1)));
+    expirePresetsMenu->addAction(tr("%n month(s)", nullptr, 3))->setData(QVariant::fromValue(TimeDelta::fromMonths(3)));
+    expirePresetsMenu->addAction(tr("%n month(s)", nullptr, 6))->setData(QVariant::fromValue(TimeDelta::fromMonths(6)));
+    expirePresetsMenu->addSeparator();
+    expirePresetsMenu->addAction(tr("%n year(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromYears(1)));
+    expirePresetsMenu->addAction(tr("%n year(s)", nullptr, 2))->setData(QVariant::fromValue(TimeDelta::fromYears(2)));
+    expirePresetsMenu->addAction(tr("%n year(s)", nullptr, 3))->setData(QVariant::fromValue(TimeDelta::fromYears(3)));
+    return expirePresetsMenu;
 }
 
 void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<Database>& database)
@@ -133,15 +158,24 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     if (m_group->parentGroup()) {
         addTriStateItems(m_mainUi->searchComboBox, m_group->parentGroup()->resolveSearchingEnabled());
         addTriStateItems(m_mainUi->autotypeComboBox, m_group->parentGroup()->resolveAutoTypeEnabled());
+        addTriStateItems(m_mainUi->defaultExpirationPeriodComboBox,
+                         m_group->parentGroup()->resolveDefaultExpirationPeriodEnabled());
     } else {
         addTriStateItems(m_mainUi->searchComboBox, true);
         addTriStateItems(m_mainUi->autotypeComboBox, true);
+        addTriStateItems(m_mainUi->defaultExpirationPeriodComboBox, false);
     }
 
     m_mainUi->editName->setText(m_group->name());
     m_mainUi->editNotes->setPlainText(m_group->notes());
     m_mainUi->expireCheck->setChecked(group->timeInfo().expires());
     m_mainUi->expireDatePicker->setDateTime(group->timeInfo().expiryTime().toLocalTime());
+    m_mainUi->defaultExpirationPeriodYearsSpinBox->setValue(group->defaultExpirationPeriod().getYears());
+    m_mainUi->defaultExpirationPeriodMonthsSpinBox->setValue(group->defaultExpirationPeriod().getMonths());
+    m_mainUi->defaultExpirationPeriodDaysSpinBox->setValue(group->defaultExpirationPeriod().getDays());
+    m_mainUi->defaultExpirationPeriodComboBox->setCurrentIndex(
+        indexFromTriState(group->defaultExpirationPeriodEnabled()));
+    updateExpirationPeriodWidgets(m_mainUi->defaultExpirationPeriodComboBox->currentIndex());
     m_mainUi->searchComboBox->setCurrentIndex(indexFromTriState(group->searchingEnabled()));
     m_mainUi->autotypeComboBox->setCurrentIndex(indexFromTriState(group->autoTypeEnabled()));
     if (group->defaultAutoTypeSequence().isEmpty()) {
@@ -172,6 +206,44 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     setModified(false);
 }
 
+void EditGroupWidget::updateExpirationPeriodWidgets(int index)
+{
+    Group::TriState triState;
+    if (index >= 0) {
+        triState = triStateFromIndex(index);
+    } else {
+        triState = Group::Disable;
+    }
+
+
+    switch (triState) {
+    case Group::Enable: {
+        m_mainUi->defaultExpirationPeriodYearsSpinBox->setEnabled(true);
+        m_mainUi->defaultExpirationPeriodMonthsSpinBox->setEnabled(true);
+        m_mainUi->defaultExpirationPeriodDaysSpinBox->setEnabled(true);
+        m_mainUi->defaultExpirationPeriodPresetsButton->setEnabled(true);
+        break;
+    }
+    case Group::Inherit: {
+        TimeDelta inheritedPeriod = m_group->effectiveDefaultExpirationPeriod();
+        m_mainUi->defaultExpirationPeriodYearsSpinBox->setValue(inheritedPeriod.getYears());
+        m_mainUi->defaultExpirationPeriodMonthsSpinBox->setValue(inheritedPeriod.getMonths());
+        m_mainUi->defaultExpirationPeriodDaysSpinBox->setValue(inheritedPeriod.getDays());
+        [[fallthrough]];
+    }
+    case Group::Disable: {
+        m_mainUi->defaultExpirationPeriodYearsSpinBox->setEnabled(false);
+        m_mainUi->defaultExpirationPeriodMonthsSpinBox->setEnabled(false);
+        m_mainUi->defaultExpirationPeriodDaysSpinBox->setEnabled(false);
+        m_mainUi->defaultExpirationPeriodPresetsButton->setEnabled(false);
+        break;
+    }
+    default:
+        Q_ASSERT(false);
+        break;
+    }
+}
+
 void EditGroupWidget::save()
 {
     apply();
@@ -185,6 +257,16 @@ void EditGroupWidget::apply()
     m_temporaryGroup->setNotes(m_mainUi->editNotes->toPlainText());
     m_temporaryGroup->setExpires(m_mainUi->expireCheck->isChecked());
     m_temporaryGroup->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
+
+    Group::TriState defaultExpirationPeriodEnabled =
+        triStateFromIndex(m_mainUi->defaultExpirationPeriodComboBox->currentIndex());
+    m_temporaryGroup->setDefaultExpirationPeriodEnabled(defaultExpirationPeriodEnabled);
+    if (defaultExpirationPeriodEnabled == Group::Enable) {
+        TimeDelta defaultExpirationPeriod(m_mainUi->defaultExpirationPeriodDaysSpinBox->value(),
+                                          m_mainUi->defaultExpirationPeriodMonthsSpinBox->value(),
+                                          m_mainUi->defaultExpirationPeriodYearsSpinBox->value());
+        m_temporaryGroup->setDefaultExpirationPeriod(defaultExpirationPeriod);
+    }
 
     m_temporaryGroup->setSearchingEnabled(triStateFromIndex(m_mainUi->searchComboBox->currentIndex()));
     m_temporaryGroup->setAutoTypeEnabled(triStateFromIndex(m_mainUi->autotypeComboBox->currentIndex()));

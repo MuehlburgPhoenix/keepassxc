@@ -247,6 +247,24 @@ Group::TriState Group::defaultExpirationPeriodEnabled() const
     return m_data.defaultExpirationPeriodEnabled;
 }
 
+TimeDelta Group::effectiveDefaultExpirationPeriod() const
+{
+    const Group* group = this;
+    do {
+        if (group->defaultExpirationPeriodEnabled() == Group::Disable) {
+            break;
+        }
+
+        if (group->defaultExpirationPeriodEnabled() == Group::Enable) {
+            return group->defaultExpirationPeriod();
+        }
+
+        group = group->parentGroup();
+    } while (group);
+
+    return TimeDelta(0, 0, 0);
+}
+
 Group::TriState Group::searchingEnabled() const
 {
     return m_data.searchingEnabled;
@@ -1079,6 +1097,25 @@ bool Group::resolveAutoTypeEnabled() const
             return true;
         } else {
             return m_parent->resolveAutoTypeEnabled();
+        }
+    case Enable:
+        return true;
+    case Disable:
+        return false;
+    default:
+        Q_ASSERT(false);
+        return false;
+    }
+}
+
+bool Group::resolveDefaultExpirationPeriodEnabled() const
+{
+    switch (m_data.defaultExpirationPeriodEnabled) {
+    case Inherit:
+        if (!m_parent) {
+            return false;
+        } else {
+            return m_parent->resolveDefaultExpirationPeriodEnabled();
         }
     case Enable:
         return true;
