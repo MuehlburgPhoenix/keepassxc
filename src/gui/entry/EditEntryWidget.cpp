@@ -284,6 +284,7 @@ void EditEntryWidget::setupEntryUpdate()
     connect(m_mainUi->titleEdit, SIGNAL(textChanged(QString)), this, SLOT(setModified()));
     connect(m_mainUi->usernameComboBox->lineEdit(), SIGNAL(textChanged(QString)), this, SLOT(setModified()));
     connect(m_mainUi->passwordEdit, SIGNAL(textChanged(QString)), this, SLOT(setModified()));
+    connect(m_mainUi->passwordEdit, SIGNAL(editingFinished()), this, SLOT(updateExpiryDate()));
     connect(m_mainUi->passwordRepeatEdit, SIGNAL(textChanged(QString)), this, SLOT(setModified()));
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), this, SLOT(setModified()));
 #ifdef WITH_XC_NETWORKING
@@ -1277,6 +1278,17 @@ void EditEntryWidget::applyCurrentAssoc()
     }
 
     m_autoTypeAssoc->update(index.row(), assoc);
+}
+
+void EditEntryWidget::updateExpiryDate()
+{
+    // TODO: Haken um Erbe von Parent wirklich immer zu übernehmen.
+    m_mainUi->expireCheck->setChecked(m_entry->group()->resolveDefaultExpirationPeriodEnabled());
+
+    QDateTime now = Clock::currentDateTime();
+    TimeDelta delta = m_entry->group()->effectiveDefaultExpirationPeriod();
+    QDateTime expiryDateTime = now + delta;
+    m_mainUi->expireDatePicker->setDateTime(expiryDateTime);
 }
 
 void EditEntryWidget::showHistoryEntry()

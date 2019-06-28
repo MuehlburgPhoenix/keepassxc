@@ -97,6 +97,7 @@ private slots:
     void loadCurrentAssoc(const QModelIndex& current);
     void clearCurrentAssoc();
     void applyCurrentAssoc();
+    void updateExpiryDate();
     void showHistoryEntry();
     void restoreHistoryEntry();
     void deleteHistoryEntry();
