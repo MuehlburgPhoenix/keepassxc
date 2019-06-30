@@ -27,8 +27,8 @@
 #include <QScopedPointer>
 
 #include "config-keepassx.h"
-#include "gui/EditWidget.h"
 #include "core/Entry.h"
+#include "gui/EditWidget.h"
 
 class AutoTypeAssociations;
 class AutoTypeAssociationsModel;
@@ -85,6 +85,7 @@ private slots:
 #ifdef WITH_XC_NETWORKING
     void updateFaviconButtonEnable(const QString& url);
 #endif
+    void updateValidityPeriodWidgets(int index);
     void insertAttribute();
     void editCurrentAttribute();
     void removeCurrentAttribute();
@@ -146,8 +147,8 @@ private:
     void displayAttribute(QModelIndex index, bool showProtected);
 
     void addTriStateItems(QComboBox* comboBox, bool inheritValue);
-    int indexFromTriState(Entry::TriState triState);
-    Entry::TriState triStateFromIndex(int index);
+    int indexFromTriState(Entry::TriState triState) const;
+    Entry::TriState triStateFromIndex(int index) const;
 
     QPointer<Entry> m_entry;
     QSharedPointer<Database> m_db;

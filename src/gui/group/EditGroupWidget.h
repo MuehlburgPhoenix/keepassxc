@@ -75,8 +75,8 @@ private slots:
 
 private:
     void addTriStateItems(QComboBox* comboBox, bool inheritValue);
-    int indexFromTriState(Group::TriState triState);
-    Group::TriState triStateFromIndex(int index);
+    int indexFromTriState(Group::TriState triState) const;
+    Group::TriState triStateFromIndex(int index) const;
 
     void setupModifiedTracking();
     QMenu* createDefaultExpirationPeriodPresetsMenu();

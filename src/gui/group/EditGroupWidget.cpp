@@ -93,6 +93,9 @@ EditGroupWidget::EditGroupWidget(QWidget* parent)
     connect(m_editGroupWidgetIcons, SIGNAL(messageEditEntryDismiss()), SLOT(hideMessage()));
 
     setupModifiedTracking();
+    connect(m_mainUi->defaultExpirationPeriodComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            SLOT(updateExpirationPeriodWidgets(int)));
 
     m_mainUi->defaultExpirationPeriodPresetsButton->setMenu(createDefaultExpirationPeriodPresetsMenu());
 }
@@ -109,9 +112,9 @@ void EditGroupWidget::setupModifiedTracking()
     connect(m_mainUi->expireCheck, SIGNAL(stateChanged(int)), SLOT(setModified()));
     connect(m_mainUi->expireDatePicker, SIGNAL(dateTimeChanged(QDateTime)), SLOT(setModified()));
     connect(m_mainUi->defaultExpirationPeriodComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
-    connect(m_mainUi->defaultExpirationPeriodComboBox,
-            SIGNAL(currentIndexChanged(int)),
-            SLOT(updateExpirationPeriodWidgets(int)));
+    connect(m_mainUi->defaultExpirationPeriodYearsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setModified()));
+    connect(m_mainUi->defaultExpirationPeriodMonthsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setModified()));
+    connect(m_mainUi->defaultExpirationPeriodDaysSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setModified()));
     connect(m_mainUi->searchComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autotypeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autoTypeSequenceInherit, SIGNAL(toggled(bool)), SLOT(setModified()));
@@ -260,12 +263,10 @@ void EditGroupWidget::apply()
     Group::TriState defaultExpirationPeriodEnabled =
         triStateFromIndex(m_mainUi->defaultExpirationPeriodComboBox->currentIndex());
     m_temporaryGroup->setDefaultExpirationPeriodEnabled(defaultExpirationPeriodEnabled);
-    if (defaultExpirationPeriodEnabled == Group::Enable) {
-        TimeDelta defaultExpirationPeriod(m_mainUi->defaultExpirationPeriodDaysSpinBox->value(),
-                                          m_mainUi->defaultExpirationPeriodMonthsSpinBox->value(),
-                                          m_mainUi->defaultExpirationPeriodYearsSpinBox->value());
-        m_temporaryGroup->setDefaultExpirationPeriod(defaultExpirationPeriod);
-    }
+    TimeDelta defaultExpirationPeriod(m_mainUi->defaultExpirationPeriodDaysSpinBox->value(),
+                                      m_mainUi->defaultExpirationPeriodMonthsSpinBox->value(),
+                                      m_mainUi->defaultExpirationPeriodYearsSpinBox->value());
+    m_temporaryGroup->setDefaultExpirationPeriod(defaultExpirationPeriod);
 
     m_temporaryGroup->setSearchingEnabled(triStateFromIndex(m_mainUi->searchComboBox->currentIndex()));
     m_temporaryGroup->setAutoTypeEnabled(triStateFromIndex(m_mainUi->autotypeComboBox->currentIndex()));
@@ -364,7 +365,7 @@ void EditGroupWidget::addTriStateItems(QComboBox* comboBox, bool inheritDefault)
     comboBox->addItem(tr("Disable"));
 }
 
-int EditGroupWidget::indexFromTriState(Group::TriState triState)
+int EditGroupWidget::indexFromTriState(Group::TriState triState) const
 {
     switch (triState) {
     case Group::Inherit:
@@ -379,7 +380,7 @@ int EditGroupWidget::indexFromTriState(Group::TriState triState)
     }
 }
 
-Group::TriState EditGroupWidget::triStateFromIndex(int index)
+Group::TriState EditGroupWidget::triStateFromIndex(int index) const
 {
     switch (index) {
     case 0:

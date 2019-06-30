@@ -461,6 +461,22 @@ void Entry::setTotp(QSharedPointer<Totp::Settings> settings)
     endUpdate();
 }
 
+void Entry::setDefaultExpirationPeriod(const TimeDelta& period)
+{
+    customData()->set("DefaultExpirationPeriod", period.toString());
+}
+
+void Entry::setDefaultExpirationPeriodEnabled(TriState enable)
+{
+    if (enable == Entry::Inherit) {
+        customData()->set("DefaultExpirationPeriodEnabled", "null");
+    } else if (enable == Entry::Enable) {
+        customData()->set("DefaultExpirationPeriodEnabled", "true");
+    } else {
+        customData()->set("DefaultExpirationPeriodEnabled", "false");
+    }
+}
+
 void Entry::updateTotp()
 {
     if (m_attributes->contains(Totp::ATTRIBUTE_SETTINGS)) {

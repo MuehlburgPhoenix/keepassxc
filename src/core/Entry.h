@@ -161,6 +161,8 @@ public:
     void setExpires(const bool& value);
     void setExpiryTime(const QDateTime& dateTime);
     void setTotp(QSharedPointer<Totp::Settings> settings);
+    void setDefaultExpirationPeriod(const TimeDelta& period);
+    void setDefaultExpirationPeriodEnabled(TriState enable);
 
     QList<Entry*> historyItems();
     const QList<Entry*>& historyItems() const;
