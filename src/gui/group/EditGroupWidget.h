@@ -67,7 +67,7 @@ signals:
     void messageEditEntryDismiss();
 
 private slots:
-    void updateExpirationPeriodWidgets(int index);
+    void updateValidityPeriodWidgets(int index);
 
     void apply();
     void save();
@@ -79,7 +79,7 @@ private:
     Group::TriState triStateFromIndex(int index) const;
 
     void setupModifiedTracking();
-    QMenu* createDefaultExpirationPeriodPresetsMenu();
+    QMenu* createDefaultValidityPeriodPresetsMenu();
 
     const QScopedPointer<Ui::EditGroupWidgetMain> m_mainUi;
 

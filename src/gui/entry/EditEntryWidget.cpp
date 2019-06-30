@@ -740,8 +740,8 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->passwordGenerator->reset(entry->password().length());
 
     Q_ASSERT(entry->group());
-    addTriStateItems(m_mainUi->validityPeriodComboBox, entry->group()->resolveDefaultExpirationPeriodEnabled());
-    m_mainUi->validityPeriodComboBox->setCurrentIndex(indexFromTriState(entry->defaultExpirationPeriodEnabled()));
+    addTriStateItems(m_mainUi->validityPeriodComboBox, entry->group()->resolveDefaultValidityPeriodEnabled());
+    m_mainUi->validityPeriodComboBox->setCurrentIndex(indexFromTriState(entry->validityPeriodEnabled()));
 
     m_advancedUi->attachmentsWidget->setReadOnly(m_history);
     m_advancedUi->addAttributeButton->setEnabled(!m_history);
@@ -946,11 +946,11 @@ void EditEntryWidget::updateEntryData(Entry* entry) const
     entry->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
 
     Entry::TriState validityPeriodEnabled = triStateFromIndex(m_mainUi->validityPeriodComboBox->currentIndex());
-    entry->setDefaultExpirationPeriodEnabled(validityPeriodEnabled);
+    entry->setValidityPeriodEnabled(validityPeriodEnabled);
     TimeDelta validityPeriod(m_mainUi->validityPeriodDaysSpinBox->value(),
                              m_mainUi->validityPeriodMonthsSpinBox->value(),
                              m_mainUi->validityPeriodYearsSpinBox->value());
-    entry->setDefaultExpirationPeriod(validityPeriod);
+    entry->setValidityPeriod(validityPeriod);
 
     entry->setNotes(m_mainUi->notesEdit->toPlainText());
 
@@ -1085,7 +1085,7 @@ void EditEntryWidget::updateValidityPeriodWidgets(int index)
         break;
     }
     case Entry::Inherit: {
-        TimeDelta inheritedPeriod = m_entry->effectiveDefaultExpirationPeriod();
+        TimeDelta inheritedPeriod = m_entry->effectiveValidityPeriod();
         m_mainUi->validityPeriodYearsSpinBox->setValue(inheritedPeriod.getYears());
         m_mainUi->validityPeriodMonthsSpinBox->setValue(inheritedPeriod.getMonths());
         m_mainUi->validityPeriodDaysSpinBox->setValue(inheritedPeriod.getDays());
@@ -1342,7 +1342,7 @@ void EditEntryWidget::updateExpiryDate()
         return;
     }
 
-    if (!m_entry->resolveDefaultExpirationPeriodEnabled()) {
+    if (!m_entry->resolveValidityPeriodEnabled()) {
         m_mainUi->expireCheck->setChecked(false);
         return;
     }
@@ -1350,7 +1350,7 @@ void EditEntryWidget::updateExpiryDate()
     m_mainUi->expireCheck->setChecked(true);
 
     QDateTime now = Clock::currentDateTime();
-    TimeDelta delta = m_entry->effectiveDefaultExpirationPeriod();
+    TimeDelta delta = m_entry->effectiveValidityPeriod();
     QDateTime expiryDateTime = now + delta;
     m_mainUi->expireDatePicker->setDateTime(expiryDateTime);
 }

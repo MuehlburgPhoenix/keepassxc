@@ -24,7 +24,7 @@
     <number>0</number>
    </property>
    <item row="3" column="0" alignment="Qt::AlignRight">
-    <widget class="QLabel" name="defaultExpirationPeriodLabel">
+    <widget class="QLabel" name="defaultValidityPeriodLabel">
      <property name="text">
       <string>Default Period</string>
      </property>
@@ -111,7 +111,7 @@
     <widget class="QComboBox" name="searchComboBox"/>
    </item>
    <item row="3" column="1">
-    <widget class="QComboBox" name="defaultExpirationPeriodComboBox"/>
+    <widget class="QComboBox" name="defaultValidityPeriodComboBox"/>
    </item>
    <item row="9" column="1">
     <widget class="QRadioButton" name="autoTypeSequenceCustomRadio">
@@ -158,9 +158,9 @@
     </widget>
    </item>
    <item row="4" column="1">
-    <layout class="QGridLayout" name="defaultExpirationPeriodGridLayout">
+    <layout class="QGridLayout" name="defaultValidityPeriodGridLayout">
      <item row="0" column="1">
-      <widget class="QSpinBox" name="defaultExpirationPeriodYearsSpinBox">
+      <widget class="QSpinBox" name="defaultValidityPeriodYearsSpinBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -173,7 +173,7 @@
       </widget>
      </item>
      <item row="0" column="8">
-      <spacer name="defaultExpirationPeriodPresetsSpacer">
+      <spacer name="defaultValidityPeriodPresetsSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -189,7 +189,7 @@
       </spacer>
      </item>
      <item row="0" column="5">
-      <spacer name="defaultExpirationPeriodMonthsDaysSpacer">
+      <spacer name="defaultValidityPeriodMonthsDaysSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -205,14 +205,14 @@
       </spacer>
      </item>
      <item row="0" column="3">
-      <widget class="QLabel" name="defaultExpirationPeriodMonthsLabel">
+      <widget class="QLabel" name="defaultValidityPeriodMonthsLabel">
        <property name="text">
         <string>Months:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="2">
-      <spacer name="defaultExpirationPeriodYearsMonthsSpacer">
+      <spacer name="defaultValidityPeriodYearsMonthsSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -228,21 +228,21 @@
       </spacer>
      </item>
      <item row="0" column="0">
-      <widget class="QLabel" name="defaultExpirationPeriodYearsLabel">
+      <widget class="QLabel" name="defaultValidityPeriodYearsLabel">
        <property name="text">
         <string>Years:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="6">
-      <widget class="QLabel" name="defaultExpirationPeriodDaysLabel">
+      <widget class="QLabel" name="defaultValidityPeriodDaysLabel">
        <property name="text">
         <string>Days:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="4">
-      <widget class="QSpinBox" name="defaultExpirationPeriodMonthsSpinBox">
+      <widget class="QSpinBox" name="defaultValidityPeriodMonthsSpinBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -258,7 +258,7 @@
       </widget>
      </item>
      <item row="0" column="7">
-      <widget class="QSpinBox" name="defaultExpirationPeriodDaysSpinBox">
+      <widget class="QSpinBox" name="defaultValidityPeriodDaysSpinBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -274,7 +274,7 @@
       </widget>
      </item>
      <item row="0" column="9">
-      <widget class="QPushButton" name="defaultExpirationPeriodPresetsButton">
+      <widget class="QPushButton" name="defaultValidityPeriodPresetsButton">
        <property name="enabled">
         <bool>false</bool>
        </property>

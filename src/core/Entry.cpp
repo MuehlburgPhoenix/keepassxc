@@ -461,19 +461,19 @@ void Entry::setTotp(QSharedPointer<Totp::Settings> settings)
     endUpdate();
 }
 
-void Entry::setDefaultExpirationPeriod(const TimeDelta& period)
+void Entry::setValidityPeriod(const TimeDelta& period)
 {
-    customData()->set("DefaultExpirationPeriod", period.toString());
+    customData()->set("Validity Period", period.toString());
 }
 
-void Entry::setDefaultExpirationPeriodEnabled(TriState enable)
+void Entry::setValidityPeriodEnabled(TriState enable)
 {
     if (enable == Entry::Inherit) {
-        customData()->set("DefaultExpirationPeriodEnabled", "null");
+        customData()->set("Validity Period Enabled", "null");
     } else if (enable == Entry::Enable) {
-        customData()->set("DefaultExpirationPeriodEnabled", "true");
+        customData()->set("Validity Period Enabled", "true");
     } else {
-        customData()->set("DefaultExpirationPeriodEnabled", "false");
+        customData()->set("Validity Period Enabled", "false");
     }
 }
 
@@ -492,50 +492,50 @@ QSharedPointer<Totp::Settings> Entry::totpSettings() const
     return m_data.totpSettings;
 }
 
-TimeDelta Entry::defaultExpirationPeriod() const
+TimeDelta Entry::validityPeriod() const
 {
-    if (!m_customData->contains("DefaultExpirationPeriod")) {
-        m_customData->set("DefaultExpirationPeriod", "0:0:0");
+    if (!m_customData->contains("Validity Period")) {
+        m_customData->set("Validity Period", "0:0:0");
     }
 
-    return TimeDelta::fromString(m_customData->value("DefaultExpirationPeriod"));
+    return TimeDelta::fromString(m_customData->value("Validity Period"));
 }
 
-TimeDelta Entry::effectiveDefaultExpirationPeriod() const
+TimeDelta Entry::effectiveValidityPeriod() const
 {
-    Entry::TriState triState = defaultExpirationPeriodEnabled();
+    Entry::TriState triState = validityPeriodEnabled();
     if (triState == Entry::Enable) {
-        return defaultExpirationPeriod();
+        return validityPeriod();
     }
     if (triState == Entry::Disable) {
         return TimeDelta(0, 0, 0);
     }
 
-    return m_group->effectiveDefaultExpirationPeriod();
+    return m_group->effectiveDefaultValidityPeriod();
 }
 
-Entry::TriState Entry::defaultExpirationPeriodEnabled() const
+Entry::TriState Entry::validityPeriodEnabled() const
 {
-    if (!m_customData->contains("DefaultExpirationPeriodEnabled")) {
-        m_customData->set("DefaultExpirationPeriodEnabled", "null");
+    if (!m_customData->contains("Validity Period Enabled")) {
+        m_customData->set("Validity Period Enabled", "null");
     }
 
     Entry::TriState triState = Entry::Disable;
 
-    if (m_customData->value("DefaultExpirationPeriodEnabled") == "null") {
+    if (m_customData->value("Validity Period Enabled") == "null") {
         triState = Entry::Inherit;
-    } else if (m_customData->value("DefaultExpirationPeriodEnabled") == "true") {
+    } else if (m_customData->value("Validity Period Enabled") == "true") {
         triState = Entry::Enable;
-    } else if (m_customData->value("DefaultExpirationPeriodEnabled") == "false") {
+    } else if (m_customData->value("Validity Period Enabled") == "false") {
         triState = Entry::Disable;
     }
 
     return triState;
 }
 
-bool Entry::resolveDefaultExpirationPeriodEnabled() const
+bool Entry::resolveValidityPeriodEnabled() const
 {
-    Entry::TriState triState = defaultExpirationPeriodEnabled();
+    Entry::TriState triState = validityPeriodEnabled();
     if (triState == Entry::Enable) {
         return true;
     }
@@ -543,7 +543,7 @@ bool Entry::resolveDefaultExpirationPeriodEnabled() const
         return false;
     }
 
-    return m_group->resolveDefaultExpirationPeriodEnabled();
+    return m_group->resolveDefaultValidityPeriodEnabled();
 }
 
 void Entry::setUuid(const QUuid& uuid)

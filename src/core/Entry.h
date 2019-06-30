@@ -116,10 +116,10 @@ public:
     QString attribute(const QString& key) const;
     QString totp() const;
     QSharedPointer<Totp::Settings> totpSettings() const;
-    TimeDelta defaultExpirationPeriod() const;
-    TimeDelta effectiveDefaultExpirationPeriod() const;
-    Entry::TriState defaultExpirationPeriodEnabled() const;
-    bool resolveDefaultExpirationPeriodEnabled() const;
+    TimeDelta validityPeriod() const;
+    TimeDelta effectiveValidityPeriod() const;
+    Entry::TriState validityPeriodEnabled() const;
+    bool resolveValidityPeriodEnabled() const;
 
     bool hasTotp() const;
     bool isExpired() const;
@@ -161,8 +161,8 @@ public:
     void setExpires(const bool& value);
     void setExpiryTime(const QDateTime& dateTime);
     void setTotp(QSharedPointer<Totp::Settings> settings);
-    void setDefaultExpirationPeriod(const TimeDelta& period);
-    void setDefaultExpirationPeriodEnabled(TriState enable);
+    void setValidityPeriod(const TimeDelta& period);
+    void setValidityPeriodEnabled(TriState enable);
 
     QList<Entry*> historyItems();
     const QList<Entry*>& historyItems() const;

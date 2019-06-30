@@ -236,25 +236,25 @@ Group::TriState Group::autoTypeEnabled() const
     return m_data.autoTypeEnabled;
 }
 
-TimeDelta Group::defaultExpirationPeriod() const
+TimeDelta Group::defaultValidityPeriod() const
 {
-    if (!m_customData->contains("DefaultExpirationPeriod")) {
-        m_customData->set("DefaultExpirationPeriod", "0:0:0");
+    if (!m_customData->contains("Default Validity Period")) {
+        m_customData->set("Default Validity Period", "0:0:0");
     }
 
-    return TimeDelta::fromString(m_customData->value("DefaultExpirationPeriod"));
+    return TimeDelta::fromString(m_customData->value("Default Validity Period"));
 }
 
-TimeDelta Group::effectiveDefaultExpirationPeriod() const
+TimeDelta Group::effectiveDefaultValidityPeriod() const
 {
     const Group* group = this;
     do {
-        if (group->defaultExpirationPeriodEnabled() == Group::Disable) {
+        if (group->defaultValidityPeriodEnabled() == Group::Disable) {
             break;
         }
 
-        if (group->defaultExpirationPeriodEnabled() == Group::Enable) {
-            return group->defaultExpirationPeriod();
+        if (group->defaultValidityPeriodEnabled() == Group::Enable) {
+            return group->defaultValidityPeriod();
         }
 
         group = group->parentGroup();
@@ -263,19 +263,19 @@ TimeDelta Group::effectiveDefaultExpirationPeriod() const
     return TimeDelta(0, 0, 0);
 }
 
-Group::TriState Group::defaultExpirationPeriodEnabled() const
+Group::TriState Group::defaultValidityPeriodEnabled() const
 {
-    if (!m_customData->contains("DefaultExpirationPeriodEnabled")) {
-        m_customData->set("DefaultExpirationPeriodEnabled", "null");
+    if (!m_customData->contains("Default Validity Period Enabled")) {
+        m_customData->set("Default Validity Period Enabled", "null");
     }
 
     Group::TriState triState = Group::Disable;
 
-    if (m_customData->value("DefaultExpirationPeriodEnabled") == "null") {
+    if (m_customData->value("Default Validity Period Enabled") == "null") {
         triState = Group::Inherit;
-    } else if (m_customData->value("DefaultExpirationPeriodEnabled") == "true") {
+    } else if (m_customData->value("Default Validity Period Enabled") == "true") {
         triState = Group::Enable;
-    } else if (m_customData->value("DefaultExpirationPeriodEnabled") == "false") {
+    } else if (m_customData->value("Default Validity Period Enabled") == "false") {
         triState = Group::Disable;
     }
 
@@ -434,19 +434,19 @@ void Group::setAutoTypeEnabled(TriState enable)
     set(m_data.autoTypeEnabled, enable);
 }
 
-void Group::setDefaultExpirationPeriod(const TimeDelta& period)
+void Group::setDefaultValidityPeriod(const TimeDelta& period)
 {
-    customData()->set("DefaultExpirationPeriod", period.toString());
+    customData()->set("Default Validity Period", period.toString());
 }
 
-void Group::setDefaultExpirationPeriodEnabled(TriState enable)
+void Group::setDefaultValidityPeriodEnabled(TriState enable)
 {
     if (enable == Group::Inherit) {
-        customData()->set("DefaultExpirationPeriodEnabled", "null");
+        customData()->set("Default Validity Period Enabled", "null");
     } else if (enable == Group::Enable) {
-        customData()->set("DefaultExpirationPeriodEnabled", "true");
+        customData()->set("Default Validity Period Enabled", "true");
     } else {
-        customData()->set("DefaultExpirationPeriodEnabled", "false");
+        customData()->set("Default Validity Period Enabled", "false");
     }
 }
 
@@ -1131,14 +1131,14 @@ bool Group::resolveAutoTypeEnabled() const
     }
 }
 
-bool Group::resolveDefaultExpirationPeriodEnabled() const
+bool Group::resolveDefaultValidityPeriodEnabled() const
 {
-    switch (defaultExpirationPeriodEnabled()) {
+    switch (defaultValidityPeriodEnabled()) {
     case Inherit:
         if (!m_parent) {
             return false;
         } else {
-            return m_parent->resolveDefaultExpirationPeriodEnabled();
+            return m_parent->resolveDefaultValidityPeriodEnabled();
         }
     case Enable:
         return true;
