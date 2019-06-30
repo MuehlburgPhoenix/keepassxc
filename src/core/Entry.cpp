@@ -506,8 +506,11 @@ TimeDelta Entry::effectiveValidityPeriod() const
     Entry::TriState triState = validityPeriodEnabled();
     if (triState == Entry::Enable) {
         return validityPeriod();
+    } else if (triState == Entry::Disable) {
+        return TimeDelta(0, 0, 0);
     }
-    if (triState == Entry::Disable) {
+
+    if (!m_group) {
         return TimeDelta(0, 0, 0);
     }
 
@@ -538,8 +541,11 @@ bool Entry::resolveValidityPeriodEnabled() const
     Entry::TriState triState = validityPeriodEnabled();
     if (triState == Entry::Enable) {
         return true;
+    } else if (triState == Entry::Disable) {
+        return false;
     }
-    if (triState == Entry::Disable) {
+
+    if (!m_group) {
         return false;
     }
 

@@ -739,8 +739,11 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->togglePasswordGeneratorButton->setDisabled(m_history);
     m_mainUi->passwordGenerator->reset(entry->password().length());
 
-    Q_ASSERT(entry->group());
-    addTriStateItems(m_mainUi->validityPeriodComboBox, entry->group()->resolveDefaultValidityPeriodEnabled());
+    if (entry->group()) {
+        addTriStateItems(m_mainUi->validityPeriodComboBox, entry->group()->resolveDefaultValidityPeriodEnabled());
+    } else {
+        addTriStateItems(m_mainUi->validityPeriodComboBox, false);
+    }
     m_mainUi->validityPeriodComboBox->setCurrentIndex(indexFromTriState(entry->validityPeriodEnabled()));
 
     m_advancedUi->attachmentsWidget->setReadOnly(m_history);
@@ -1396,7 +1399,7 @@ void EditEntryWidget::deleteAllHistoryEntries()
 QMenu* EditEntryWidget::createPresetsMenu()
 {
     auto* expirePresetsMenu = new QMenu(this);
-    expirePresetsMenu->addAction(tr("Tomorrow"))->setData(QVariant::fromValue(TimeDelta::fromDays(1)));
+    expirePresetsMenu->addAction(tr("%n day(s)"))->setData(QVariant::fromValue(TimeDelta::fromDays(1)));
     expirePresetsMenu->addSeparator();
     expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromDays(7)));
     expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 2))->setData(QVariant::fromValue(TimeDelta::fromDays(14)));
