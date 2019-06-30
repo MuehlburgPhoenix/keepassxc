@@ -98,6 +98,10 @@ EditGroupWidget::EditGroupWidget(QWidget* parent)
             SLOT(updateValidityPeriodWidgets(int)));
 
     m_mainUi->defaultValidityPeriodPresetsButton->setMenu(createDefaultValidityPeriodPresetsMenu());
+    connect(m_mainUi->defaultValidityPeriodPresetsButton->menu(),
+            SIGNAL(triggered(QAction*)),
+            this,
+            SLOT(useDefaultValidityPeriodPreset(QAction*)));
 }
 
 EditGroupWidget::~EditGroupWidget()
@@ -243,6 +247,14 @@ void EditGroupWidget::updateValidityPeriodWidgets(int index)
         Q_ASSERT(false);
         break;
     }
+}
+
+void EditGroupWidget::useDefaultValidityPeriodPreset(QAction* action)
+{
+    TimeDelta delta = action->data().value<TimeDelta>();
+    m_mainUi->defaultValidityPeriodYearsSpinBox->setValue(delta.getYears());
+    m_mainUi->defaultValidityPeriodMonthsSpinBox->setValue(delta.getMonths());
+    m_mainUi->defaultValidityPeriodDaysSpinBox->setValue(delta.getDays());
 }
 
 void EditGroupWidget::save()

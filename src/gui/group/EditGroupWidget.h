@@ -68,6 +68,7 @@ signals:
 
 private slots:
     void updateValidityPeriodWidgets(int index);
+    void useDefaultValidityPeriodPreset(QAction* action);
 
     void apply();
     void save();

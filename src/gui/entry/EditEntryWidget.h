@@ -108,6 +108,7 @@ private slots:
     void histEntryActivated(const QModelIndex& index);
     void updateHistoryButtons(const QModelIndex& current, const QModelIndex& previous);
     void useExpiryPreset(QAction* action);
+    void useValidityPeriodPreset(QAction* action);
     void toggleHideNotes(bool visible);
     void pickColor();
 #ifdef WITH_XC_SSHAGENT

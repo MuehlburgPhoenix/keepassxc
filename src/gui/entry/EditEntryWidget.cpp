@@ -164,6 +164,10 @@ void EditEntryWidget::setupMain()
 
     m_mainUi->expirePresets->setMenu(createPresetsMenu());
     connect(m_mainUi->expirePresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useExpiryPreset(QAction*)));
+    connect(m_mainUi->validityPeriodPresetsButton->menu(),
+            SIGNAL(triggered(QAction*)),
+            this,
+            SLOT(useValidityPeriodPreset(QAction*)));
 
     m_mainUi->passwordGenerator->hide();
     m_mainUi->passwordGenerator->reset();
@@ -670,6 +674,14 @@ void EditEntryWidget::useExpiryPreset(QAction* action)
     QDateTime now = Clock::currentDateTime();
     QDateTime expiryDateTime = now + delta;
     m_mainUi->expireDatePicker->setDateTime(expiryDateTime);
+}
+
+void EditEntryWidget::useValidityPeriodPreset(QAction* action)
+{
+    TimeDelta delta = action->data().value<TimeDelta>();
+    m_mainUi->validityPeriodYearsSpinBox->setValue(delta.getYears());
+    m_mainUi->validityPeriodMonthsSpinBox->setValue(delta.getMonths());
+    m_mainUi->validityPeriodDaysSpinBox->setValue(delta.getDays());
 }
 
 void EditEntryWidget::toggleHideNotes(bool visible)
@@ -1399,7 +1411,7 @@ void EditEntryWidget::deleteAllHistoryEntries()
 QMenu* EditEntryWidget::createPresetsMenu()
 {
     auto* expirePresetsMenu = new QMenu(this);
-    expirePresetsMenu->addAction(tr("%n day(s)"))->setData(QVariant::fromValue(TimeDelta::fromDays(1)));
+    expirePresetsMenu->addAction(tr("%n day(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromDays(1)));
     expirePresetsMenu->addSeparator();
     expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromDays(7)));
     expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 2))->setData(QVariant::fromValue(TimeDelta::fromDays(14)));
