@@ -731,6 +731,10 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->togglePasswordGeneratorButton->setDisabled(m_history);
     m_mainUi->passwordGenerator->reset(entry->password().length());
 
+    if (m_entry->group()) {
+        addTriStateItems(m_mainUi->validityPeriodComboBox, m_entry->group()->resolveDefaultExpirationPeriodEnabled());
+    }
+
     m_advancedUi->attachmentsWidget->setReadOnly(m_history);
     m_advancedUi->addAttributeButton->setEnabled(!m_history);
     m_advancedUi->editAttributeButton->setEnabled(false);
@@ -1282,11 +1286,19 @@ void EditEntryWidget::applyCurrentAssoc()
 
 void EditEntryWidget::updateExpiryDate()
 {
-    // TODO: Haken um Erbe von Parent wirklich immer zu übernehmen.
-    m_mainUi->expireCheck->setChecked(m_entry->group()->resolveDefaultExpirationPeriodEnabled());
+    if (triStateFromIndex(m_mainUi->validityPeriodComboBox->currentIndex()) == Entry::Disable) {
+        return;
+    }
+
+    if (!m_entry->resolveDefaultExpirationPeriodEnabled()) {
+        m_mainUi->expireCheck->setChecked(false);
+        return;
+    }
+
+    m_mainUi->expireCheck->setChecked(true);
 
     QDateTime now = Clock::currentDateTime();
-    TimeDelta delta = m_entry->group()->effectiveDefaultExpirationPeriod();
+    TimeDelta delta = m_entry->effectiveDefaultExpirationPeriod();
     QDateTime expiryDateTime = now + delta;
     m_mainUi->expireDatePicker->setDateTime(expiryDateTime);
 }
@@ -1380,5 +1392,50 @@ void EditEntryWidget::pickColor()
     if (newColor.isValid()) {
         setupColorButton(isForeground, newColor);
         setModified(true);
+    }
+}
+
+void EditEntryWidget::addTriStateItems(QComboBox* comboBox, bool inheritDefault)
+{
+    QString inheritDefaultString;
+    if (inheritDefault) {
+        inheritDefaultString = tr("Enable");
+    } else {
+        inheritDefaultString = tr("Disable");
+    }
+
+    comboBox->clear();
+    comboBox->addItem(tr("Inherit from parent group (%1)").arg(inheritDefaultString));
+    comboBox->addItem(tr("Enable"));
+    comboBox->addItem(tr("Disable"));
+}
+
+int EditEntryWidget::indexFromTriState(Entry::TriState triState)
+{
+    switch (triState) {
+    case Entry::Inherit:
+        return 0;
+    case Entry::Enable:
+        return 1;
+    case Entry::Disable:
+        return 2;
+    default:
+        Q_ASSERT(false);
+        return 0;
+    }
+}
+
+Entry::TriState EditEntryWidget::triStateFromIndex(int index)
+{
+    switch (index) {
+    case 0:
+        return Entry::Inherit;
+    case 1:
+        return Entry::Enable;
+    case 2:
+        return Entry::Disable;
+    default:
+        Q_ASSERT(false);
+        return Entry::Inherit;
     }
 }

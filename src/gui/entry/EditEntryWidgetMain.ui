@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>EditEntryWidgetMain</class>
  <widget class="QWidget" name="EditEntryWidgetMain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>348</width>
+    <height>433</height>
+   </rect>
+  </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="topMargin">
     <number>0</number>
@@ -25,8 +33,7 @@
       <widget class="QLineEdit" name="urlEdit"/>
      </item>
      <item>
-      <widget class="QToolButton" name="fetchFaviconButton">
-      </widget>
+      <widget class="QToolButton" name="fetchFaviconButton"/>
      </item>
     </layout>
    </item>
@@ -90,7 +97,7 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0" alignment="Qt::AlignLeft|Qt::AlignTop">
+   <item row="9" column="0" alignment="Qt::AlignRight|Qt::AlignTop">
     <widget class="QCheckBox" name="notesEnabled">
      <property name="text">
       <string>Notes</string>
@@ -172,6 +179,16 @@
       <string>Expires</string>
      </property>
     </widget>
+   </item>
+   <item row="6" column="0" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="validityPeriodLabel">
+     <property name="text">
+      <string>Validity Period:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="validityPeriodComboBox"/>
    </item>
   </layout>
  </widget>

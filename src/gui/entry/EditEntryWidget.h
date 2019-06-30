@@ -20,6 +20,7 @@
 #define KEEPASSX_EDITENTRYWIDGET_H
 
 #include <QButtonGroup>
+#include <QComboBox>
 #include <QCompleter>
 #include <QModelIndex>
 #include <QPointer>
@@ -27,6 +28,7 @@
 
 #include "config-keepassx.h"
 #include "gui/EditWidget.h"
+#include "core/Entry.h"
 
 class AutoTypeAssociations;
 class AutoTypeAssociationsModel;
@@ -34,7 +36,6 @@ class CustomData;
 class Database;
 class EditWidgetIcons;
 class EditWidgetProperties;
-class Entry;
 class EntryAttributes;
 class EntryAttributesModel;
 class EntryHistoryModel;
@@ -143,6 +144,10 @@ private:
 #endif
 
     void displayAttribute(QModelIndex index, bool showProtected);
+
+    void addTriStateItems(QComboBox* comboBox, bool inheritValue);
+    int indexFromTriState(Entry::TriState triState);
+    Entry::TriState triStateFromIndex(int index);
 
     QPointer<Entry> m_entry;
     QSharedPointer<Database> m_db;

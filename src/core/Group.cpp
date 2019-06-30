@@ -245,6 +245,24 @@ TimeDelta Group::defaultExpirationPeriod() const
     return TimeDelta::fromString(m_customData->value("DefaultExpirationPeriod"));
 }
 
+TimeDelta Group::effectiveDefaultExpirationPeriod() const
+{
+    const Group* group = this;
+    do {
+        if (group->defaultExpirationPeriodEnabled() == Group::Disable) {
+            break;
+        }
+
+        if (group->defaultExpirationPeriodEnabled() == Group::Enable) {
+            return group->defaultExpirationPeriod();
+        }
+
+        group = group->parentGroup();
+    } while (group);
+
+    return TimeDelta(0, 0, 0);
+}
+
 Group::TriState Group::defaultExpirationPeriodEnabled() const
 {
     if (!m_customData->contains("DefaultExpirationPeriodEnabled")) {
@@ -262,24 +280,6 @@ Group::TriState Group::defaultExpirationPeriodEnabled() const
     }
 
     return triState;
-}
-
-TimeDelta Group::effectiveDefaultExpirationPeriod() const
-{
-    const Group* group = this;
-    do {
-        if (group->defaultExpirationPeriodEnabled() == Group::Disable) {
-            break;
-        }
-
-        if (group->defaultExpirationPeriodEnabled() == Group::Enable) {
-            return group->defaultExpirationPeriod();
-        }
-
-        group = group->parentGroup();
-    } while (group);
-
-    return TimeDelta(0, 0, 0);
 }
 
 Group::TriState Group::searchingEnabled() const

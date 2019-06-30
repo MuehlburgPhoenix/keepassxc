@@ -32,6 +32,7 @@
 #include "core/CustomData.h"
 #include "core/EntryAttachments.h"
 #include "core/EntryAttributes.h"
+#include "core/TimeDelta.h"
 #include "core/TimeInfo.h"
 
 class Database;
@@ -77,6 +78,13 @@ class Entry : public QObject
     Q_OBJECT
 
 public:
+    enum TriState
+    {
+        Inherit,
+        Enable,
+        Disable
+    };
+
     Entry();
     ~Entry();
     const QUuid& uuid() const;
@@ -108,6 +116,10 @@ public:
     QString attribute(const QString& key) const;
     QString totp() const;
     QSharedPointer<Totp::Settings> totpSettings() const;
+    TimeDelta defaultExpirationPeriod() const;
+    TimeDelta effectiveDefaultExpirationPeriod() const;
+    Entry::TriState defaultExpirationPeriodEnabled() const;
+    bool resolveDefaultExpirationPeriodEnabled() const;
 
     bool hasTotp() const;
     bool isExpired() const;

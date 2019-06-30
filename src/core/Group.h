@@ -99,8 +99,8 @@ public:
     QString effectiveAutoTypeSequence() const;
     Group::TriState autoTypeEnabled() const;
     TimeDelta defaultExpirationPeriod() const;
-    Group::TriState defaultExpirationPeriodEnabled() const;
     TimeDelta effectiveDefaultExpirationPeriod() const;
+    Group::TriState defaultExpirationPeriodEnabled() const;
     Group::TriState searchingEnabled() const;
     Group::MergeMode mergeMode() const;
     bool resolveSearchingEnabled() const;
