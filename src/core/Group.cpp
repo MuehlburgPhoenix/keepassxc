@@ -43,7 +43,6 @@ Group::Group()
     m_data.iconNumber = DefaultIconNumber;
     m_data.isExpanded = true;
     m_data.autoTypeEnabled = Inherit;
-    m_data.defaultExpirationPeriodEnabled = Inherit;
     m_data.searchingEnabled = Inherit;
     m_data.mergeMode = Default;
 
@@ -239,12 +238,30 @@ Group::TriState Group::autoTypeEnabled() const
 
 TimeDelta Group::defaultExpirationPeriod() const
 {
-    return m_data.defaultExpirationPeriod;
+    if (!m_customData->contains("DefaultExpirationPeriod")) {
+        m_customData->set("DefaultExpirationPeriod", "0:0:0");
+    }
+
+    return TimeDelta::fromString(m_customData->value("DefaultExpirationPeriod"));
 }
 
 Group::TriState Group::defaultExpirationPeriodEnabled() const
 {
-    return m_data.defaultExpirationPeriodEnabled;
+    if (!m_customData->contains("DefaultExpirationPeriodEnabled")) {
+        m_customData->set("DefaultExpirationPeriodEnabled", "null");
+    }
+
+    Group::TriState triState = Group::Disable;
+
+    if (m_customData->value("DefaultExpirationPeriodEnabled") == "null") {
+        triState = Group::Inherit;
+    } else if (m_customData->value("DefaultExpirationPeriodEnabled") == "true") {
+        triState = Group::Enable;
+    } else if (m_customData->value("DefaultExpirationPeriodEnabled") == "false") {
+        triState = Group::Disable;
+    }
+
+    return triState;
 }
 
 TimeDelta Group::effectiveDefaultExpirationPeriod() const
@@ -419,12 +436,18 @@ void Group::setAutoTypeEnabled(TriState enable)
 
 void Group::setDefaultExpirationPeriod(const TimeDelta& period)
 {
-    m_data.defaultExpirationPeriod = period;
+    customData()->set("DefaultExpirationPeriod", period.toString());
 }
 
 void Group::setDefaultExpirationPeriodEnabled(TriState enable)
 {
-    set(m_data.defaultExpirationPeriodEnabled, enable);
+    if (enable == Group::Inherit) {
+        customData()->set("DefaultExpirationPeriodEnabled", "null");
+    } else if (enable == Group::Enable) {
+        customData()->set("DefaultExpirationPeriodEnabled", "true");
+    } else {
+        customData()->set("DefaultExpirationPeriodEnabled", "false");
+    }
 }
 
 void Group::setSearchingEnabled(TriState enable)
@@ -1110,7 +1133,7 @@ bool Group::resolveAutoTypeEnabled() const
 
 bool Group::resolveDefaultExpirationPeriodEnabled() const
 {
-    switch (m_data.defaultExpirationPeriodEnabled) {
+    switch (defaultExpirationPeriodEnabled()) {
     case Inherit:
         if (!m_parent) {
             return false;

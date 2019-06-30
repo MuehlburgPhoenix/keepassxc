@@ -215,7 +215,6 @@ void EditGroupWidget::updateExpirationPeriodWidgets(int index)
         triState = Group::Disable;
     }
 
-
     switch (triState) {
     case Group::Enable: {
         m_mainUi->defaultExpirationPeriodYearsSpinBox->setEnabled(true);

@@ -31,6 +31,7 @@ public:
     static TimeDelta fromDays(int days);
     static TimeDelta fromMonths(int months);
     static TimeDelta fromYears(int years);
+    static TimeDelta fromString(QString formatted);
 
     TimeDelta();
     TimeDelta(int days, int months, int years);
@@ -38,6 +39,8 @@ public:
     int getDays() const;
     int getMonths() const;
     int getYears() const;
+
+    QString toString() const;
 
 private:
     int m_days;

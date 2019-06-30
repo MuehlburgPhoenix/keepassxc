@@ -41,6 +41,7 @@ public:
         Enable,
         Disable
     };
+
     enum MergeMode
     {
         Default, // Determine merge strategy from parent or fallback (Synchronize)
@@ -70,8 +71,6 @@ public:
         bool isExpanded;
         QString defaultAutoTypeSequence;
         Group::TriState autoTypeEnabled;
-        TimeDelta defaultExpirationPeriod;
-        Group::TriState defaultExpirationPeriodEnabled;
         Group::TriState searchingEnabled;
         Group::MergeMode mergeMode;
 

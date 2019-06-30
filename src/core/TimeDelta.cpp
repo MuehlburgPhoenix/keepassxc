@@ -18,6 +18,7 @@
 #include "TimeDelta.h"
 
 #include <QDateTime>
+#include <QString>
 
 QDateTime operator+(const QDateTime& dateTime, const TimeDelta& delta)
 {
@@ -37,6 +38,15 @@ TimeDelta TimeDelta::fromMonths(int months)
 TimeDelta TimeDelta::fromYears(int years)
 {
     return TimeDelta(0, 0, years);
+}
+
+TimeDelta TimeDelta::fromString(QString formatted)
+{
+    QStringList splitString = formatted.split(':');
+    int years = splitString[0].toInt();
+    int months = splitString[1].toInt();
+    int days = splitString[2].toInt();
+    return TimeDelta(days, months, years);
 }
 
 TimeDelta::TimeDelta()
@@ -66,4 +76,9 @@ int TimeDelta::getMonths() const
 int TimeDelta::getYears() const
 {
     return m_years;
+}
+
+QString TimeDelta::toString() const
+{
+    return QString::number(getYears()) + ":" + QString::number(getMonths()) + ":" + QString::number(getDays());
 }
