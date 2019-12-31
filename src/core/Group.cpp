@@ -42,8 +42,8 @@ Group::Group()
 {
     m_data.iconNumber = DefaultIconNumber;
     m_data.isExpanded = true;
-    m_data.autoTypeEnabled = Inherit;
-    m_data.searchingEnabled = Inherit;
+    m_data.autoTypeEnabled = TriState::Inherit;
+    m_data.searchingEnabled = TriState::Inherit;
     m_data.mergeMode = Default;
 
     connect(m_customData, SIGNAL(customDataModified()), this, SIGNAL(groupModified()));
@@ -205,7 +205,7 @@ QString Group::effectiveAutoTypeSequence() const
 
     const Group* group = this;
     do {
-        if (group->autoTypeEnabled() == Group::Disable) {
+        if (group->autoTypeEnabled() == TriState::Disable) {
             return QString();
         }
 
@@ -220,14 +220,19 @@ QString Group::effectiveAutoTypeSequence() const
     return sequence;
 }
 
-Group::TriState Group::autoTypeEnabled() const
+TriState::State Group::autoTypeEnabled() const
 {
     return m_data.autoTypeEnabled;
 }
 
-Group::TriState Group::searchingEnabled() const
+TriState::State Group::searchingEnabled() const
 {
     return m_data.searchingEnabled;
+}
+
+TriState::State Group::defaultExpirationEnabled() const
+{
+    return m_data.defaultExpirationEnabled;
 }
 
 Group::MergeMode Group::mergeMode() const
@@ -377,14 +382,25 @@ void Group::setDefaultAutoTypeSequence(const QString& sequence)
     set(m_data.defaultAutoTypeSequence, sequence);
 }
 
-void Group::setAutoTypeEnabled(TriState enable)
+void Group::setAutoTypeEnabled(TriState::State enable)
 {
     set(m_data.autoTypeEnabled, enable);
 }
 
-void Group::setSearchingEnabled(TriState enable)
+void Group::setSearchingEnabled(TriState::State enable)
 {
     set(m_data.searchingEnabled, enable);
+}
+
+void Group::setDefaultExpirationEnabled(TriState::State enable)
+{
+    customData()->set("DefaultExpirationEnabled", QString::number(enable));
+
+}
+
+void Group::setDefaultExpirationPeriod(int days)
+{
+    customData()->set("DefaultExpirationPeriod", QString::number(days));
 }
 
 void Group::setLastTopVisibleEntry(Entry* entry)
@@ -1033,15 +1049,15 @@ void Group::recCreateDelObjects()
 bool Group::resolveSearchingEnabled() const
 {
     switch (m_data.searchingEnabled) {
-    case Inherit:
+    case TriState::Inherit:
         if (!m_parent) {
             return true;
         } else {
             return m_parent->resolveSearchingEnabled();
         }
-    case Enable:
+    case TriState::Enable:
         return true;
-    case Disable:
+    case TriState::Disable:
         return false;
     default:
         Q_ASSERT(false);
@@ -1052,15 +1068,15 @@ bool Group::resolveSearchingEnabled() const
 bool Group::resolveAutoTypeEnabled() const
 {
     switch (m_data.autoTypeEnabled) {
-    case Inherit:
+    case TriState::Inherit:
         if (!m_parent) {
             return true;
         } else {
             return m_parent->resolveAutoTypeEnabled();
         }
-    case Enable:
+    case TriState::Enable:
         return true;
-    case Disable:
+    case TriState::Disable:
         return false;
     default:
         Q_ASSERT(false);

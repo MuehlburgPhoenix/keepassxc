@@ -28,18 +28,13 @@
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/TimeInfo.h"
+#include "core/TriState.h"
 
 class Group : public QObject
 {
     Q_OBJECT
 
 public:
-    enum TriState
-    {
-        Inherit,
-        Enable,
-        Disable
-    };
     enum MergeMode
     {
         Default, // Determine merge strategy from parent or fallback (Synchronize)
@@ -68,8 +63,9 @@ public:
         TimeInfo timeInfo;
         bool isExpanded;
         QString defaultAutoTypeSequence;
-        Group::TriState autoTypeEnabled;
-        Group::TriState searchingEnabled;
+        TriState::State autoTypeEnabled;
+        TriState::State searchingEnabled;
+        TriState::State defaultExpirationEnabled;
         Group::MergeMode mergeMode;
 
         bool operator==(const GroupData& other) const;
@@ -93,8 +89,9 @@ public:
     bool isExpanded() const;
     QString defaultAutoTypeSequence() const;
     QString effectiveAutoTypeSequence() const;
-    Group::TriState autoTypeEnabled() const;
-    Group::TriState searchingEnabled() const;
+    TriState::State autoTypeEnabled() const;
+    TriState::State searchingEnabled() const;
+    TriState::State defaultExpirationEnabled() const;
     Group::MergeMode mergeMode() const;
     bool resolveSearchingEnabled() const;
     bool resolveAutoTypeEnabled() const;
@@ -129,8 +126,10 @@ public:
     void setTimeInfo(const TimeInfo& timeInfo);
     void setExpanded(bool expanded);
     void setDefaultAutoTypeSequence(const QString& sequence);
-    void setAutoTypeEnabled(TriState enable);
-    void setSearchingEnabled(TriState enable);
+    void setAutoTypeEnabled(TriState::State enable);
+    void setSearchingEnabled(TriState::State enable);
+    void setDefaultExpirationEnabled(TriState::State enable);
+    void setDefaultExpirationPeriod(int days);
     void setLastTopVisibleEntry(Entry* entry);
     void setExpires(bool value);
     void setExpiryTime(const QDateTime& dateTime);

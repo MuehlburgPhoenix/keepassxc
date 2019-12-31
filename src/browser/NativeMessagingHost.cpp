@@ -35,9 +35,9 @@ NativeMessagingHost::NativeMessagingHost(DatabaseTabWidget* parent, const bool e
 {
     m_localServer.reset(new QLocalServer(this));
     m_localServer->setSocketOptions(QLocalServer::UserAccessOption);
-    m_running.store(0);
+    m_running.storeRelaxed(0);
 
-    if (browserSettings()->isEnabled() && m_running.load() == 0) {
+    if (browserSettings()->isEnabled() && m_running.loadRelaxed() == 0) {
         run();
     }
 
@@ -59,7 +59,7 @@ int NativeMessagingHost::init()
 void NativeMessagingHost::run()
 {
     QMutexLocker locker(&m_mutex);
-    if (m_running.load() == 0 && init() == -1) {
+    if (m_running.loadRelaxed() == 0 && init() == -1) {
         return;
     }
 
@@ -69,7 +69,7 @@ void NativeMessagingHost::run()
             browserSettings()->useCustomProxy() ? browserSettings()->customProxyLocation() : "");
     }
 
-    m_running.store(1);
+    m_running.storeRelaxed(1);
 #ifdef Q_OS_WIN
     m_future =
         QtConcurrent::run(this, static_cast<void (NativeMessagingHost::*)()>(&NativeMessagingHost::readNativeMessages));

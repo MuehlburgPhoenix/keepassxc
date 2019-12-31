@@ -1021,6 +1021,29 @@ void Entry::setGroup(Group* group)
     }
 }
 
+void Entry::setGroupTemporarily(Group* group)
+{
+    Q_ASSERT(group);
+
+    if (m_group) {
+        m_group->removeEntry(this);
+        if (m_group->database() && m_group->database() != group->database()) {
+            m_group->database()->addDeletedObject(m_uuid);
+
+            // copy custom icon to the new database
+            if (!iconUuid().isNull() && group->database()
+                && m_group->database()->metadata()->containsCustomIcon(iconUuid())
+                && m_group->database()->metadata()->containsCustomIcon(iconUuid())) {
+                group->database()->metadata()->addCustomIcon(iconUuid(), icon());
+            }
+        }
+    }
+
+    m_group = group;
+
+    QObject::setParent(group);
+}
+
 void Entry::emitDataChanged()
 {
     emit entryDataChanged(this);

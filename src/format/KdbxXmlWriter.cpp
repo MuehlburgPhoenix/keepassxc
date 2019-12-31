@@ -544,13 +544,13 @@ void KdbxXmlWriter::writeColor(const QString& qualifiedName, const QColor& color
     writeString(qualifiedName, colorStr);
 }
 
-void KdbxXmlWriter::writeTriState(const QString& qualifiedName, Group::TriState triState)
+void KdbxXmlWriter::writeTriState(const QString& qualifiedName, TriState::State triState)
 {
     QString value;
 
-    if (triState == Group::Inherit) {
+    if (triState == TriState::Inherit) {
         value = "null";
-    } else if (triState == Group::Enable) {
+    } else if (triState == TriState::Enable) {
         value = "true";
     } else {
         value = "false";

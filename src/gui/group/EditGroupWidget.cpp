@@ -22,6 +22,7 @@
 #include "core/Config.h"
 #include "core/FilePath.h"
 #include "core/Metadata.h"
+#include "core/TriState.h"
 #include "gui/EditWidgetIcons.h"
 #include "gui/EditWidgetProperties.h"
 #include "gui/MessageBox.h"
@@ -108,6 +109,7 @@ void EditGroupWidget::setupModifiedTracking()
     connect(m_mainUi->editNotes, SIGNAL(textChanged()), SLOT(setModified()));
     connect(m_mainUi->expireCheck, SIGNAL(stateChanged(int)), SLOT(setModified()));
     connect(m_mainUi->expireDatePicker, SIGNAL(dateTimeChanged(QDateTime)), SLOT(setModified()));
+    connect(m_mainUi->defaultExpirationComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->searchComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autotypeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autoTypeSequenceInherit, SIGNAL(toggled(bool)), SLOT(setModified()));
@@ -144,6 +146,7 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     m_mainUi->editNotes->setPlainText(m_group->notes());
     m_mainUi->expireCheck->setChecked(group->timeInfo().expires());
     m_mainUi->expireDatePicker->setDateTime(group->timeInfo().expiryTime().toLocalTime());
+    m_mainUi->defaultExpirationComboBox->setCurrentIndex(indexFromTriState(group->defaultExpirationEnabled());
     m_mainUi->searchComboBox->setCurrentIndex(indexFromTriState(group->searchingEnabled()));
     m_mainUi->autotypeComboBox->setCurrentIndex(indexFromTriState(group->autoTypeEnabled()));
     if (group->defaultAutoTypeSequence().isEmpty()) {
@@ -194,6 +197,7 @@ void EditGroupWidget::apply()
     m_temporaryGroup->setExpires(m_mainUi->expireCheck->isChecked());
     m_temporaryGroup->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
 
+    m_temporaryGroup->setDefaultExpirationEnabled(triStateFromIndex(m_mainUi->defaultExpirationComboBox->currentIndex()));
     m_temporaryGroup->setSearchingEnabled(triStateFromIndex(m_mainUi->searchComboBox->currentIndex()));
     m_temporaryGroup->setAutoTypeEnabled(triStateFromIndex(m_mainUi->autotypeComboBox->currentIndex()));
 
@@ -289,34 +293,4 @@ void EditGroupWidget::addTriStateItems(QComboBox* comboBox, bool inheritDefault)
     comboBox->addItem(tr("Inherit from parent group (%1)").arg(inheritDefaultString));
     comboBox->addItem(tr("Enable"));
     comboBox->addItem(tr("Disable"));
-}
-
-int EditGroupWidget::indexFromTriState(Group::TriState triState)
-{
-    switch (triState) {
-    case Group::Inherit:
-        return 0;
-    case Group::Enable:
-        return 1;
-    case Group::Disable:
-        return 2;
-    default:
-        Q_ASSERT(false);
-        return 0;
-    }
-}
-
-Group::TriState EditGroupWidget::triStateFromIndex(int index)
-{
-    switch (index) {
-    case 0:
-        return Group::Inherit;
-    case 1:
-        return Group::Enable;
-    case 2:
-        return Group::Disable;
-    default:
-        Q_ASSERT(false);
-        return Group::Inherit;
-    }
 }

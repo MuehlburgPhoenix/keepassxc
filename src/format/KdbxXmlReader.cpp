@@ -124,8 +124,10 @@ void KdbxXmlReader::readDatabase(QIODevice* device, Database* db, KeePass2Random
         qWarning("KdbxXmlReader::readDatabase: found %d invalid entry reference(s)", m_tmpParent->children().size());
     }
 
-    const QSet<QString> poolKeys = asConst(m_binaryPool).keys().toSet();
-    const QSet<QString> entryKeys = asConst(m_binaryMap).keys().toSet();
+    const QList<QString> poolKeyList = asConst(m_binaryPool).keys();
+    const QSet<QString> poolKeys = QSet<QString>(poolKeyList.begin(), poolKeyList.end());
+    const QList<QString> mapKeyList = asConst(m_binaryMap).keys();
+    const QSet<QString> entryKeys = QSet<QString>(mapKeyList.begin(), mapKeyList.end());
     const QSet<QString> unmappedKeys = entryKeys - poolKeys;
     const QSet<QString> unusedKeys = poolKeys - entryKeys;
 
@@ -544,11 +546,11 @@ Group* KdbxXmlReader::parseGroup()
             QString str = readString();
 
             if (str.compare("null", Qt::CaseInsensitive) == 0) {
-                group->setAutoTypeEnabled(Group::Inherit);
+                group->setAutoTypeEnabled(TriState::Inherit);
             } else if (str.compare("true", Qt::CaseInsensitive) == 0) {
-                group->setAutoTypeEnabled(Group::Enable);
+                group->setAutoTypeEnabled(TriState::Enable);
             } else if (str.compare("false", Qt::CaseInsensitive) == 0) {
-                group->setAutoTypeEnabled(Group::Disable);
+                group->setAutoTypeEnabled(TriState::Disable);
             } else {
                 raiseError(tr("Invalid EnableAutoType value"));
             }
@@ -558,11 +560,11 @@ Group* KdbxXmlReader::parseGroup()
             QString str = readString();
 
             if (str.compare("null", Qt::CaseInsensitive) == 0) {
-                group->setSearchingEnabled(Group::Inherit);
+                group->setSearchingEnabled(TriState::Inherit);
             } else if (str.compare("true", Qt::CaseInsensitive) == 0) {
-                group->setSearchingEnabled(Group::Enable);
+                group->setSearchingEnabled(TriState::Enable);
             } else if (str.compare("false", Qt::CaseInsensitive) == 0) {
-                group->setSearchingEnabled(Group::Disable);
+                group->setSearchingEnabled(TriState::Disable);
             } else {
                 raiseError(tr("Invalid EnableSearching value"));
             }

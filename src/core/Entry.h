@@ -220,6 +220,7 @@ public:
     Group* group();
     const Group* group() const;
     void setGroup(Group* group);
+    void setGroupTemporarily(Group* group);
     const Database* database() const;
     Database* database();
 
