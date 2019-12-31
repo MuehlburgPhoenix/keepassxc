@@ -30,8 +30,8 @@ public:
         Disable
     };
 
-    static int indexFromTriState(TriState::State triState);
-    static TriState::State triStateFromIndex(int index);
+    static int indexFromTriState(State triState);
+    static State triStateFromIndex(int index);
 };
 
 #endif // KEEPASSX_TRISTATE_H

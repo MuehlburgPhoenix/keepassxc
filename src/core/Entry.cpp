@@ -294,6 +294,34 @@ const AutoTypeAssociations* Entry::autoTypeAssociations() const
     return m_autoTypeAssociations;
 }
 
+TriState::State Entry::expirationEnabled() const
+{
+    return TriState::triStateFromIndex(customData()->value("ExpirationEnabled").toInt());
+}
+
+bool Entry::effectiveExpiration() const
+{
+    switch (expirationEnabled()) {
+    case TriState::Inherit:
+        if (m_group) {
+            return m_group->resolveDefaultExpirationEnabled();
+        } else {
+            return false;
+        }
+        break;
+    case TriState::Enable:
+        return true;
+        break;
+    case TriState::Disable:
+        return false;
+        break;
+    default:
+        Q_ASSERT(false);
+        return false;
+        break;
+    }
+}
+
 QString Entry::title() const
 {
     return m_attributes->value(EntryAttributes::TitleKey);
@@ -588,6 +616,17 @@ void Entry::setDefaultAttribute(const QString& attribute, const QString& value)
     }
 
     m_attributes->set(attribute, value, m_attributes->isProtected(attribute));
+}
+
+void Entry::setValidityPeriodEnabled(const TriState::State state)
+{
+    customData()->set("ExpirationEnabled", QString::number(TriState::indexFromTriState(state)));
+
+    bool expires = effectiveExpiration();
+    if (m_data.timeInfo.expires() != expires) {
+        m_data.timeInfo.setExpires(expires);
+        emit entryModified();
+    }
 }
 
 void Entry::setExpires(const bool& value)

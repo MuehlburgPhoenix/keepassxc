@@ -232,7 +232,22 @@ TriState::State Group::searchingEnabled() const
 
 TriState::State Group::defaultExpirationEnabled() const
 {
-    return m_data.defaultExpirationEnabled;
+    TriState::State state;
+    bool valid;
+
+    int stateIndex = customData()->value("DefaultExpirationEnabled").toInt(&valid);
+    if (valid) {
+        state = TriState::triStateFromIndex(stateIndex);
+    } else {
+        state = TriState::Inherit;
+    }
+
+    return state;
+}
+
+int Group::defaultExpirationPeriod() const
+{
+    return customData()->value("DefaultExpirationPeriod").toInt();;
 }
 
 Group::MergeMode Group::mergeMode() const
@@ -1082,6 +1097,38 @@ bool Group::resolveAutoTypeEnabled() const
         Q_ASSERT(false);
         return false;
     }
+}
+
+bool Group::resolveDefaultExpirationEnabled() const
+{
+    switch (defaultExpirationEnabled()) {
+    case TriState::Inherit:
+        if (!m_parent) {
+            return true;
+        } else {
+            return m_parent->resolveDefaultExpirationEnabled();
+        }
+    case TriState::Enable:
+        return true;
+    case TriState::Disable:
+        return false;
+    default:
+        Q_ASSERT(false);
+        return false;
+    }
+}
+
+int Group::resolveDefaultExpirationPeriod() const
+{
+    int period;
+
+    if (defaultExpirationEnabled() == TriState::Inherit && m_parent) {
+        period = m_parent->resolveDefaultExpirationPeriod();
+    } else {
+        period = defaultExpirationPeriod();
+    }
+
+    return period;
 }
 
 QStringList Group::locate(const QString& locateTerm, const QString& currentPath) const

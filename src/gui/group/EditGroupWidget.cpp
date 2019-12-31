@@ -109,7 +109,7 @@ void EditGroupWidget::setupModifiedTracking()
     connect(m_mainUi->editNotes, SIGNAL(textChanged()), SLOT(setModified()));
     connect(m_mainUi->expireCheck, SIGNAL(stateChanged(int)), SLOT(setModified()));
     connect(m_mainUi->expireDatePicker, SIGNAL(dateTimeChanged(QDateTime)), SLOT(setModified()));
-    connect(m_mainUi->defaultExpirationComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
+    connect(m_mainUi->defaultPeriodComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->searchComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autotypeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(setModified()));
     connect(m_mainUi->autoTypeSequenceInherit, SIGNAL(toggled(bool)), SLOT(setModified()));
@@ -137,18 +137,20 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     if (m_group->parentGroup()) {
         addTriStateItems(m_mainUi->searchComboBox, m_group->parentGroup()->resolveSearchingEnabled());
         addTriStateItems(m_mainUi->autotypeComboBox, m_group->parentGroup()->resolveAutoTypeEnabled());
+        addTriStateItems(m_mainUi->defaultPeriodComboBox, m_group->parentGroup()->resolveDefaultExpirationEnabled());
     } else {
         addTriStateItems(m_mainUi->searchComboBox, true);
         addTriStateItems(m_mainUi->autotypeComboBox, true);
+        addTriStateItems(m_mainUi->defaultPeriodComboBox, true);
     }
 
     m_mainUi->editName->setText(m_group->name());
     m_mainUi->editNotes->setPlainText(m_group->notes());
     m_mainUi->expireCheck->setChecked(group->timeInfo().expires());
     m_mainUi->expireDatePicker->setDateTime(group->timeInfo().expiryTime().toLocalTime());
-    m_mainUi->defaultExpirationComboBox->setCurrentIndex(indexFromTriState(group->defaultExpirationEnabled());
-    m_mainUi->searchComboBox->setCurrentIndex(indexFromTriState(group->searchingEnabled()));
-    m_mainUi->autotypeComboBox->setCurrentIndex(indexFromTriState(group->autoTypeEnabled()));
+    m_mainUi->defaultPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(group->defaultExpirationEnabled()));
+    m_mainUi->searchComboBox->setCurrentIndex(TriState::indexFromTriState(group->searchingEnabled()));
+    m_mainUi->autotypeComboBox->setCurrentIndex(TriState::indexFromTriState(group->autoTypeEnabled()));
     if (group->defaultAutoTypeSequence().isEmpty()) {
         m_mainUi->autoTypeSequenceInherit->setChecked(true);
     } else {
@@ -197,9 +199,9 @@ void EditGroupWidget::apply()
     m_temporaryGroup->setExpires(m_mainUi->expireCheck->isChecked());
     m_temporaryGroup->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
 
-    m_temporaryGroup->setDefaultExpirationEnabled(triStateFromIndex(m_mainUi->defaultExpirationComboBox->currentIndex()));
-    m_temporaryGroup->setSearchingEnabled(triStateFromIndex(m_mainUi->searchComboBox->currentIndex()));
-    m_temporaryGroup->setAutoTypeEnabled(triStateFromIndex(m_mainUi->autotypeComboBox->currentIndex()));
+    m_temporaryGroup->setDefaultExpirationEnabled(TriState::triStateFromIndex(m_mainUi->defaultPeriodComboBox->currentIndex()));
+    m_temporaryGroup->setSearchingEnabled(TriState::triStateFromIndex(m_mainUi->searchComboBox->currentIndex()));
+    m_temporaryGroup->setAutoTypeEnabled(TriState::triStateFromIndex(m_mainUi->autotypeComboBox->currentIndex()));
 
     if (m_mainUi->autoTypeSequenceInherit->isChecked()) {
         m_temporaryGroup->setDefaultAutoTypeSequence(QString());

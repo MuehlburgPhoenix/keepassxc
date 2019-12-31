@@ -428,6 +428,7 @@ void EditEntryWidget::setupEntryUpdate()
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), this, SLOT(updateFaviconButtonEnable(QString)));
 #endif
     connect(m_mainUi->expireCheck, SIGNAL(stateChanged(int)), this, SLOT(setModified()));
+    connect(m_mainUi->validityPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setModified()));
     connect(m_mainUi->expireDatePicker, SIGNAL(dateTimeChanged(QDateTime)), this, SLOT(setModified()));
     connect(m_mainUi->notesEdit, SIGNAL(textChanged()), this, SLOT(setModified()));
 
@@ -866,6 +867,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->passwordEdit->setReadOnly(m_history);
     m_mainUi->passwordRepeatEdit->setReadOnly(m_history);
     m_mainUi->expireCheck->setEnabled(!m_history);
+    m_mainUi->validityPeriodComboBox->setCurrentIndex(!config()->get("DefaultExpirationEnabled").toInt());
     m_mainUi->expireDatePicker->setReadOnly(m_history);
     m_mainUi->notesEnabled->setChecked(!config()->get("security/hidenotes").toBool());
     m_mainUi->notesEdit->setReadOnly(m_history);
@@ -906,6 +908,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->passwordEdit->setText(entry->password());
     m_mainUi->passwordRepeatEdit->setText(entry->password());
     m_mainUi->expireCheck->setChecked(entry->timeInfo().expires());
+    m_mainUi->validityPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(entry->expirationEnabled()));
     m_mainUi->expireDatePicker->setDateTime(entry->timeInfo().expiryTime().toLocalTime());
     m_mainUi->expirePresets->setEnabled(!m_history);
     m_mainUi->togglePasswordButton->setChecked(config()->get("security/passwordscleartext").toBool());
@@ -1118,6 +1121,7 @@ void EditEntryWidget::updateEntryData(Entry* entry) const
     entry->setUrl(m_mainUi->urlEdit->text().replace(newLineRegex, " "));
     entry->setPassword(m_mainUi->passwordEdit->text());
     entry->setExpires(m_mainUi->expireCheck->isChecked());
+    entry->setValidityPeriodEnabled(TriState::triStateFromIndex(m_mainUi->validityPeriodComboBox->currentIndex()));
     entry->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
 
     entry->setNotes(m_mainUi->notesEdit->toPlainText());

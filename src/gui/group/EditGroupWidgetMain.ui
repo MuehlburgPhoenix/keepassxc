@@ -68,12 +68,9 @@
     </widget>
    </item>
    <item row="3" column="0" alignment="Qt::AlignRight">
-    <widget class="QLabel" name="defaultExpirationLabel">
-     <property name="accessibleName">
-      <string/>
-     </property>
+    <widget class="QLabel" name="defaultPeriodLabel">
      <property name="text">
-      <string>Default Expiration</string>
+      <string>Default Period</string>
      </property>
     </widget>
    </item>
@@ -124,9 +121,9 @@
     </spacer>
    </item>
    <item row="3" column="1">
-    <widget class="QComboBox" name="defaultExpirationComboBox">
+    <widget class="QComboBox" name="defaultPeriodComboBox">
      <property name="accessibleName">
-      <string>Default expiration toggle for this and sub groups</string>
+      <string>Default validity period toggle for this and sub groups</string>
      </property>
     </widget>
    </item>
@@ -194,7 +191,7 @@
    <item row="4" column="1">
     <layout class="QHBoxLayout" name="DefaultExpirationLayout">
      <item>
-      <widget class="QLabel" name="defaultExpirationDaysLabel">
+      <widget class="QLabel" name="defaultPeriodDaysLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -207,7 +204,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="defaultExpirationDaysSpinBox">
+      <widget class="QSpinBox" name="defaultPeriodSpinBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -223,7 +223,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="defaultExpirationPresetsButton">
+      <widget class="QPushButton" name="defaultPeriodPresetsButton">
        <property name="accessibleName">
         <string>Default expiration presets</string>
        </property>
@@ -233,7 +233,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="defaultExpirationSpacer">
+      <spacer name="defaultPeriodSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

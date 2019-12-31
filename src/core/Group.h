@@ -65,7 +65,6 @@ public:
         QString defaultAutoTypeSequence;
         TriState::State autoTypeEnabled;
         TriState::State searchingEnabled;
-        TriState::State defaultExpirationEnabled;
         Group::MergeMode mergeMode;
 
         bool operator==(const GroupData& other) const;
@@ -92,9 +91,12 @@ public:
     TriState::State autoTypeEnabled() const;
     TriState::State searchingEnabled() const;
     TriState::State defaultExpirationEnabled() const;
+    int defaultExpirationPeriod() const;
     Group::MergeMode mergeMode() const;
     bool resolveSearchingEnabled() const;
     bool resolveAutoTypeEnabled() const;
+    bool resolveDefaultExpirationEnabled() const;
+    int resolveDefaultExpirationPeriod() const;
     Entry* lastTopVisibleEntry() const;
     bool isExpired() const;
     bool isRecycled() const;
