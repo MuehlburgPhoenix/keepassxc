@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>329</width>
+    <width>337</width>
     <height>381</height>
    </rect>
   </property>
@@ -140,7 +140,7 @@
     </widget>
    </item>
    <item row="7" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="expirationLayout">
      <item>
       <widget class="QDateTimeEdit" name="expireDatePicker">
        <property name="enabled">
@@ -228,16 +228,17 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0" alignment="Qt::AlignRight">
-    <widget class="QCheckBox" name="expireCheck">
-     <property name="toolTip">
-      <string>Toggle expiration</string>
-     </property>
-     <property name="accessibleName">
-      <string>Toggle expiration</string>
-     </property>
+   <item row="6" column="0" alignment="Qt::AlignRight">
+    <widget class="QLabel" name="expirationLabel">
      <property name="text">
-      <string>Expires</string>
+      <string>Expiration:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QComboBox" name="expirationModeComboBox">
+     <property name="accessibleName">
+      <string>Default expiration toggle</string>
      </property>
     </widget>
    </item>
@@ -272,7 +273,6 @@
   <tabstop>togglePasswordGeneratorButton</tabstop>
   <tabstop>urlEdit</tabstop>
   <tabstop>fetchFaviconButton</tabstop>
-  <tabstop>expireCheck</tabstop>
   <tabstop>expireDatePicker</tabstop>
   <tabstop>expirePresets</tabstop>
   <tabstop>notesEnabled</tabstop>
