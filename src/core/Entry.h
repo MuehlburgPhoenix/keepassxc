@@ -99,8 +99,10 @@ public:
     QString effectiveNewAutoTypeSequence() const;
     AutoTypeAssociations* autoTypeAssociations();
     const AutoTypeAssociations* autoTypeAssociations() const;
-    TriState::State expirationEnabled() const;
-    bool effectiveExpiration() const;
+    TriState::State validityPeriodEnabled() const;
+    int validityPeriod() const;
+    bool effectiveValidityPeriodEnabled() const;
+    int effectiveValidityPeriod() const;
     QString title() const;
     QString url() const;
     QString webUrl() const;
@@ -150,6 +152,7 @@ public:
     void setNotes(const QString& notes);
     void setDefaultAttribute(const QString& attribute, const QString& value);
     void setValidityPeriodEnabled(const TriState::State state);
+    void setValidityPeriod(const int days);
     void setExpires(const bool& value);
     void setExpiryTime(const QDateTime& dateTime);
     void setTotp(QSharedPointer<Totp::Settings> settings);

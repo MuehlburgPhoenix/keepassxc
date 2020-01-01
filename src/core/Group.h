@@ -90,13 +90,13 @@ public:
     QString effectiveAutoTypeSequence() const;
     TriState::State autoTypeEnabled() const;
     TriState::State searchingEnabled() const;
-    TriState::State defaultExpirationEnabled() const;
-    int defaultExpirationPeriod() const;
+    TriState::State defaultValidityPeriodEnabled() const;
+    int defaultValidityPeriod() const;
     Group::MergeMode mergeMode() const;
     bool resolveSearchingEnabled() const;
     bool resolveAutoTypeEnabled() const;
-    bool resolveDefaultExpirationEnabled() const;
-    int resolveDefaultExpirationPeriod() const;
+    bool resolveDefaultValidityPeriodEnabled() const;
+    int resolveDefaultValidityPeriod() const;
     Entry* lastTopVisibleEntry() const;
     bool isExpired() const;
     bool isRecycled() const;
@@ -130,8 +130,8 @@ public:
     void setDefaultAutoTypeSequence(const QString& sequence);
     void setAutoTypeEnabled(TriState::State enable);
     void setSearchingEnabled(TriState::State enable);
-    void setDefaultExpirationEnabled(TriState::State enable);
-    void setDefaultExpirationPeriod(int days);
+    void setDefaultValidityPeriodEnabled(TriState::State enable);
+    void setDefaultValidityPeriod(int days);
     void setLastTopVisibleEntry(Entry* entry);
     void setExpires(bool value);
     void setExpiryTime(const QDateTime& dateTime);

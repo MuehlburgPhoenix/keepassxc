@@ -230,12 +230,12 @@ TriState::State Group::searchingEnabled() const
     return m_data.searchingEnabled;
 }
 
-TriState::State Group::defaultExpirationEnabled() const
+TriState::State Group::defaultValidityPeriodEnabled() const
 {
     TriState::State state;
     bool valid;
 
-    int stateIndex = customData()->value("DefaultExpirationEnabled").toInt(&valid);
+    int stateIndex = customData()->value("DefaultValidityPeriodEnabled").toInt(&valid);
     if (valid) {
         state = TriState::triStateFromIndex(stateIndex);
     } else {
@@ -245,9 +245,9 @@ TriState::State Group::defaultExpirationEnabled() const
     return state;
 }
 
-int Group::defaultExpirationPeriod() const
+int Group::defaultValidityPeriod() const
 {
-    return customData()->value("DefaultExpirationPeriod").toInt();;
+    return customData()->value("DefaultValidityPeriod").toInt();;
 }
 
 Group::MergeMode Group::mergeMode() const
@@ -407,15 +407,15 @@ void Group::setSearchingEnabled(TriState::State enable)
     set(m_data.searchingEnabled, enable);
 }
 
-void Group::setDefaultExpirationEnabled(TriState::State enable)
+void Group::setDefaultValidityPeriodEnabled(TriState::State enable)
 {
-    customData()->set("DefaultExpirationEnabled", QString::number(enable));
+    customData()->set("DefaultValidityPeriodEnabled", QString::number(enable));
 
 }
 
-void Group::setDefaultExpirationPeriod(int days)
+void Group::setDefaultValidityPeriod(int days)
 {
-    customData()->set("DefaultExpirationPeriod", QString::number(days));
+    customData()->set("DefaultValidityPeriod", QString::number(days));
 }
 
 void Group::setLastTopVisibleEntry(Entry* entry)
@@ -1099,12 +1099,12 @@ bool Group::resolveAutoTypeEnabled() const
     }
 }
 
-bool Group::resolveDefaultExpirationEnabled() const
+bool Group::resolveDefaultValidityPeriodEnabled() const
 {
-    switch (defaultExpirationEnabled()) {
+    switch (defaultValidityPeriodEnabled()) {
     case TriState::Inherit:
         if (m_parent) {
-            return m_parent->resolveDefaultExpirationEnabled();
+            return m_parent->resolveDefaultValidityPeriodEnabled();
         } else {
             return false;
         }
@@ -1118,14 +1118,14 @@ bool Group::resolveDefaultExpirationEnabled() const
     }
 }
 
-int Group::resolveDefaultExpirationPeriod() const
+int Group::resolveDefaultValidityPeriod() const
 {
     int period;
 
-    if (defaultExpirationEnabled() == TriState::Inherit && m_parent) {
-        period = m_parent->resolveDefaultExpirationPeriod();
+    if (defaultValidityPeriodEnabled() == TriState::Inherit && m_parent) {
+        period = m_parent->resolveDefaultValidityPeriod();
     } else {
-        period = defaultExpirationPeriod();
+        period = defaultValidityPeriod();
     }
 
     return period;

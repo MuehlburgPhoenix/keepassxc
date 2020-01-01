@@ -294,17 +294,22 @@ const AutoTypeAssociations* Entry::autoTypeAssociations() const
     return m_autoTypeAssociations;
 }
 
-TriState::State Entry::expirationEnabled() const
+TriState::State Entry::validityPeriodEnabled() const
 {
-    return TriState::triStateFromIndex(customData()->value("ExpirationEnabled").toInt());
+    return TriState::triStateFromIndex(customData()->value("ValidityPeriodEnabled").toInt());
 }
 
-bool Entry::effectiveExpiration() const
+int Entry::validityPeriod() const
 {
-    switch (expirationEnabled()) {
+    return customData()->value("ValidityPeriod").toInt();
+}
+
+bool Entry::effectiveValidityPeriodEnabled() const
+{
+    switch (validityPeriodEnabled()) {
     case TriState::Inherit:
         if (m_group) {
-            return m_group->resolveDefaultExpirationEnabled();
+            return m_group->resolveDefaultValidityPeriodEnabled();
         } else {
             return false;
         }
@@ -320,6 +325,16 @@ bool Entry::effectiveExpiration() const
         return false;
         break;
     }
+}
+
+int Entry::effectiveValidityPeriod() const
+{
+    TriState::State state = validityPeriodEnabled();
+    if (state == TriState::Inherit && m_group) {
+        return m_group->resolveDefaultValidityPeriod();
+    }
+
+    return validityPeriod();
 }
 
 QString Entry::title() const
@@ -622,7 +637,7 @@ void Entry::setValidityPeriodEnabled(const TriState::State state)
 {
     customData()->set("ExpirationEnabled", QString::number(TriState::indexFromTriState(state)));
 
-    bool expires = effectiveExpiration();
+    bool expires = effectiveValidityPeriod();
     if (m_data.timeInfo.expires() != expires) {
         m_data.timeInfo.setExpires(expires);
         emit entryModified();

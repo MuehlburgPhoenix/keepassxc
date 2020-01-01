@@ -168,6 +168,8 @@ void EditEntryWidget::setupMain()
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), m_iconsWidget, SLOT(setUrl(QString)));
     m_mainUi->urlEdit->enableVerifyMode();
 #endif
+
+    connect(m_mainUi->validityPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleValidityPeriodState(int)));
     connect(m_mainUi->expireCheck, SIGNAL(toggled(bool)), m_mainUi->expireDatePicker, SLOT(setEnabled(bool)));
     connect(m_mainUi->notesEnabled, SIGNAL(toggled(bool)), this, SLOT(toggleHideNotes(bool)));
     m_mainUi->passwordRepeatEdit->enableVerifyMode(m_mainUi->passwordEdit);
@@ -819,7 +821,7 @@ void EditEntryWidget::useValidityPeriodPreset(QAction* action)
 {
     m_mainUi->validityPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(TriState::Enable));
     TimeDelta delta = action->data().value<TimeDelta>();
-    m_mainUi->validityPeriodDaysSpinBox->setValue(delta.getTotalDays());
+    m_mainUi->validityPeriodSpinBox->setValue(delta.getTotalDays());
 }
 
 void EditEntryWidget::toggleHideNotes(bool visible)
@@ -876,8 +878,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->passwordEdit->setReadOnly(m_history);
     m_mainUi->passwordRepeatEdit->setReadOnly(m_history);
     m_mainUi->expireCheck->setEnabled(!m_history);
-    addTriStateItems(m_mainUi->validityPeriodComboBox, entry->effectiveExpiration());
-    m_mainUi->validityPeriodComboBox->setCurrentIndex(!config()->get("DefaultExpirationEnabled").toInt());
+    addTriStateItems(m_mainUi->validityPeriodComboBox, entry->effectiveValidityPeriodEnabled());
     m_mainUi->expireDatePicker->setReadOnly(m_history);
     m_mainUi->notesEnabled->setChecked(!config()->get("security/hidenotes").toBool());
     m_mainUi->notesEdit->setReadOnly(m_history);
@@ -918,7 +919,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->passwordEdit->setText(entry->password());
     m_mainUi->passwordRepeatEdit->setText(entry->password());
     m_mainUi->expireCheck->setChecked(entry->timeInfo().expires());
-    m_mainUi->validityPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(entry->expirationEnabled()));
+    m_mainUi->validityPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(entry->validityPeriodEnabled()));
     m_mainUi->expireDatePicker->setDateTime(entry->timeInfo().expiryTime().toLocalTime());
     m_mainUi->expirePresets->setEnabled(!m_history);
     m_mainUi->togglePasswordButton->setChecked(config()->get("security/passwordscleartext").toBool());
@@ -1591,4 +1592,15 @@ void EditEntryWidget::addTriStateItems(QComboBox* comboBox, bool inheritDefault)
     comboBox->addItem(tr("Inherit from parent group (%1)").arg(inheritDefaultString));
     comboBox->addItem(tr("Enable"));
     comboBox->addItem(tr("Disable"));
+}
+
+void EditEntryWidget::handleValidityPeriodState(int index)
+{
+    if (index == TriState::indexFromTriState(TriState::Enable)) {
+        m_mainUi->validityPeriodSpinBox->setEnabled(true);
+    } else {
+        m_mainUi->validityPeriodSpinBox->setEnabled(false);
+    }
+
+    m_mainUi->validityPeriodSpinBox->setValue(m_entry->effectiveValidityPeriod());
 }
