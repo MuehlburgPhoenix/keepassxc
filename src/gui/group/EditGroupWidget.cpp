@@ -22,6 +22,7 @@
 #include "core/Config.h"
 #include "core/FilePath.h"
 #include "core/Metadata.h"
+#include "core/TimeDelta.h"
 #include "core/TriState.h"
 #include "gui/EditWidgetIcons.h"
 #include "gui/EditWidgetProperties.h"
@@ -143,6 +144,9 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
         addTriStateItems(m_mainUi->autotypeComboBox, true);
         addTriStateItems(m_mainUi->defaultPeriodComboBox, true);
     }
+
+    m_mainUi->defaultPeriodPresets->setMenu(createPresetsMenu());
+    connect(m_mainUi->defaultPeriodPresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useValidityPeriodPreset(QAction*)));
 
     m_mainUi->editName->setText(m_group->name());
     m_mainUi->editNotes->setPlainText(m_group->notes());
@@ -295,4 +299,30 @@ void EditGroupWidget::addTriStateItems(QComboBox* comboBox, bool inheritDefault)
     comboBox->addItem(tr("Inherit from parent group (%1)").arg(inheritDefaultString));
     comboBox->addItem(tr("Enable"));
     comboBox->addItem(tr("Disable"));
+}
+
+void EditGroupWidget::useValidityPeriodPreset(QAction* action)
+{
+    m_mainUi->defaultPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(TriState::Enable));
+    TimeDelta delta = action->data().value<TimeDelta>();
+    m_mainUi->defaultPeriodSpinBox->setValue(delta.getTotalDays());
+}
+
+QMenu* EditGroupWidget::createPresetsMenu()
+{
+    auto* expirePresetsMenu = new QMenu(this);
+    expirePresetsMenu->addAction(tr("Tomorrow"))->setData(QVariant::fromValue(TimeDelta::fromDays(1)));
+    expirePresetsMenu->addSeparator();
+    expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromDays(7)));
+    expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 2))->setData(QVariant::fromValue(TimeDelta::fromDays(14)));
+    expirePresetsMenu->addAction(tr("%n week(s)", nullptr, 3))->setData(QVariant::fromValue(TimeDelta::fromDays(21)));
+    expirePresetsMenu->addSeparator();
+    expirePresetsMenu->addAction(tr("%n month(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromMonths(1)));
+    expirePresetsMenu->addAction(tr("%n month(s)", nullptr, 3))->setData(QVariant::fromValue(TimeDelta::fromMonths(3)));
+    expirePresetsMenu->addAction(tr("%n month(s)", nullptr, 6))->setData(QVariant::fromValue(TimeDelta::fromMonths(6)));
+    expirePresetsMenu->addSeparator();
+    expirePresetsMenu->addAction(tr("%n year(s)", nullptr, 1))->setData(QVariant::fromValue(TimeDelta::fromYears(1)));
+    expirePresetsMenu->addAction(tr("%n year(s)", nullptr, 2))->setData(QVariant::fromValue(TimeDelta::fromYears(2)));
+    expirePresetsMenu->addAction(tr("%n year(s)", nullptr, 3))->setData(QVariant::fromValue(TimeDelta::fromYears(3)));
+    return expirePresetsMenu;
 }

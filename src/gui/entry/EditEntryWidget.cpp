@@ -28,7 +28,6 @@
 #include <QColorDialog>
 #include <QDesktopServices>
 #include <QEvent>
-#include <QMenu>
 #include <QMimeData>
 #include <QSortFilterProxyModel>
 #include <QStackedLayout>
@@ -173,6 +172,9 @@ void EditEntryWidget::setupMain()
     connect(m_mainUi->notesEnabled, SIGNAL(toggled(bool)), this, SLOT(toggleHideNotes(bool)));
     m_mainUi->passwordRepeatEdit->enableVerifyMode(m_mainUi->passwordEdit);
     connect(m_mainUi->passwordGenerator, SIGNAL(appliedPassword(QString)), SLOT(setGeneratedPassword(QString)));
+
+    m_mainUi->validityPeriodPresets->setMenu(createPresetsMenu());
+    connect(m_mainUi->validityPeriodPresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useValidityPeriodPreset(QAction*)));
 
     m_mainUi->expirePresets->setMenu(createPresetsMenu());
     connect(m_mainUi->expirePresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useExpiryPreset(QAction*)));
@@ -813,6 +815,13 @@ void EditEntryWidget::useExpiryPreset(QAction* action)
     m_mainUi->expireDatePicker->setDateTime(expiryDateTime);
 }
 
+void EditEntryWidget::useValidityPeriodPreset(QAction* action)
+{
+    m_mainUi->validityPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(TriState::Enable));
+    TimeDelta delta = action->data().value<TimeDelta>();
+    m_mainUi->validityPeriodDaysSpinBox->setValue(delta.getTotalDays());
+}
+
 void EditEntryWidget::toggleHideNotes(bool visible)
 {
     m_mainUi->notesEdit->setVisible(visible);
@@ -867,6 +876,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->passwordEdit->setReadOnly(m_history);
     m_mainUi->passwordRepeatEdit->setReadOnly(m_history);
     m_mainUi->expireCheck->setEnabled(!m_history);
+    addTriStateItems(m_mainUi->validityPeriodComboBox, entry->effectiveExpiration());
     m_mainUi->validityPeriodComboBox->setCurrentIndex(!config()->get("DefaultExpirationEnabled").toInt());
     m_mainUi->expireDatePicker->setReadOnly(m_history);
     m_mainUi->notesEnabled->setChecked(!config()->get("security/hidenotes").toBool());
@@ -1566,4 +1576,19 @@ void EditEntryWidget::pickColor()
         setupColorButton(isForeground, newColor);
         setModified(true);
     }
+}
+
+void EditEntryWidget::addTriStateItems(QComboBox* comboBox, bool inheritDefault)
+{
+    QString inheritDefaultString;
+    if (inheritDefault) {
+        inheritDefaultString = tr("Enable");
+    } else {
+        inheritDefaultString = tr("Disable");
+    }
+
+    comboBox->clear();
+    comboBox->addItem(tr("Inherit from parent group (%1)").arg(inheritDefaultString));
+    comboBox->addItem(tr("Enable"));
+    comboBox->addItem(tr("Disable"));
 }

@@ -223,7 +223,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="defaultPeriodPresetsButton">
+      <widget class="QPushButton" name="defaultPeriodPresets">
        <property name="accessibleName">
         <string>Default expiration presets</string>
        </property>

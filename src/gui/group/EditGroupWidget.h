@@ -19,6 +19,7 @@
 #define KEEPASSX_EDITGROUPWIDGET_H
 
 #include <QComboBox>
+#include <QMenu>
 #include <QScopedPointer>
 
 #include "core/Group.h"
@@ -70,8 +71,12 @@ private slots:
     void save();
     void cancel();
 
+private slots:
+    void useValidityPeriodPreset(QAction* action);
+
 private:
     void addTriStateItems(QComboBox* comboBox, bool inheritValue);
+    QMenu* createPresetsMenu();
     void setupModifiedTracking();
 
     const QScopedPointer<Ui::EditGroupWidgetMain> m_mainUi;

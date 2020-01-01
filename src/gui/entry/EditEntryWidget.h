@@ -20,7 +20,9 @@
 #define KEEPASSX_EDITENTRYWIDGET_H
 
 #include <QButtonGroup>
+#include <QComboBox>
 #include <QCompleter>
+#include <QMenu>
 #include <QModelIndex>
 #include <QPointer>
 #include <QScopedPointer>
@@ -109,6 +111,7 @@ private slots:
     void histEntryActivated(const QModelIndex& index);
     void updateHistoryButtons(const QModelIndex& current, const QModelIndex& previous);
     void useExpiryPreset(QAction* action);
+    void useValidityPeriodPreset(QAction* action);
     void toggleHideNotes(bool visible);
     void pickColor();
 #ifdef WITH_XC_SSHAGENT
@@ -151,6 +154,7 @@ private:
     void setForms(Entry* entry, bool restore = false);
     QMenu* createPresetsMenu();
     void updateEntryData(Entry* entry) const;
+    void addTriStateItems(QComboBox* comboBox, bool inheritValue);
 #ifdef WITH_XC_SSHAGENT
     bool getOpenSSHKey(OpenSSHKey& key, bool decrypt = false);
     void saveSSHAgentConfig();
