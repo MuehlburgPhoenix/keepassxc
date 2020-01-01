@@ -1103,10 +1103,10 @@ bool Group::resolveDefaultExpirationEnabled() const
 {
     switch (defaultExpirationEnabled()) {
     case TriState::Inherit:
-        if (!m_parent) {
-            return true;
-        } else {
+        if (m_parent) {
             return m_parent->resolveDefaultExpirationEnabled();
+        } else {
+            return false;
         }
     case TriState::Enable:
         return true;

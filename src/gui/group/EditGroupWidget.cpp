@@ -142,7 +142,7 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     } else {
         addTriStateItems(m_mainUi->searchComboBox, true);
         addTriStateItems(m_mainUi->autotypeComboBox, true);
-        addTriStateItems(m_mainUi->defaultPeriodComboBox, true);
+        addTriStateItems(m_mainUi->defaultPeriodComboBox, false);
     }
 
     m_mainUi->defaultPeriodPresets->setMenu(createPresetsMenu());
