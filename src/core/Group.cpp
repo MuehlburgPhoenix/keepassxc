@@ -232,6 +232,10 @@ TriState::State Group::searchingEnabled() const
 
 TriState::State Group::defaultValidityPeriodEnabled() const
 {
+    if (!customData()->contains("DefaultValidityPeriodEnabled")) {
+        return TriState::Inherit;
+    }
+
     TriState::State state;
     bool valid;
 
@@ -247,7 +251,18 @@ TriState::State Group::defaultValidityPeriodEnabled() const
 
 int Group::defaultValidityPeriod() const
 {
-    return customData()->value("DefaultValidityPeriod").toInt();;
+    if (!customData()->contains("DefaultValidityPeriod")) {
+        return 0;
+    }
+
+    bool valid;
+
+    int defaultPeriod = customData()->value("ValidityPeriod").toInt(&valid);
+    if (!valid) {
+        defaultPeriod = 0;
+    }
+
+    return defaultPeriod;
 }
 
 Group::MergeMode Group::mergeMode() const

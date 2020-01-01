@@ -296,12 +296,37 @@ const AutoTypeAssociations* Entry::autoTypeAssociations() const
 
 TriState::State Entry::validityPeriodEnabled() const
 {
-    return TriState::triStateFromIndex(customData()->value("ValidityPeriodEnabled").toInt());
+    if (!customData()->contains("ValidityPeriodEnabled")) {
+        return TriState::Inherit;
+    }
+
+    TriState::State state;
+    bool valid;
+
+    int stateIndex = customData()->value("ValidityPeriodEnabled").toInt(&valid);
+    if (valid) {
+        state = TriState::triStateFromIndex(stateIndex);
+    } else {
+        state = TriState::Inherit;
+    }
+
+    return state;
 }
 
 int Entry::validityPeriod() const
 {
-    return customData()->value("ValidityPeriod").toInt();
+    if (!customData()->contains("ValidityPeriod")) {
+        return 0;
+    }
+
+    bool valid;
+
+    int validityPeriod = customData()->value("ValidityPeriod").toInt(&valid);
+    if (!valid) {
+        validityPeriod = 0;
+    }
+
+    return validityPeriod;
 }
 
 bool Entry::effectiveValidityPeriodEnabled() const
