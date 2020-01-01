@@ -206,6 +206,8 @@ void EditGroupWidget::apply()
     m_temporaryGroup->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
 
     m_temporaryGroup->setDefaultValidityPeriodEnabled(TriState::triStateFromIndex(m_mainUi->defaultPeriodComboBox->currentIndex()));
+    m_temporaryGroup->setDefaultValidityPeriod(m_mainUi->defaultPeriodSpinBox->value());
+
     m_temporaryGroup->setSearchingEnabled(TriState::triStateFromIndex(m_mainUi->searchComboBox->currentIndex()));
     m_temporaryGroup->setAutoTypeEnabled(TriState::triStateFromIndex(m_mainUi->autotypeComboBox->currentIndex()));
 

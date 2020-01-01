@@ -635,11 +635,16 @@ void Entry::setDefaultAttribute(const QString& attribute, const QString& value)
 
 void Entry::setValidityPeriodEnabled(const TriState::State state)
 {
-    customData()->set("ExpirationEnabled", QString::number(TriState::indexFromTriState(state)));
+    if (state != validityPeriodEnabled()) {
+        customData()->set("ValidityPeriodEnabled", QString::number(TriState::indexFromTriState(state)));
+        emit entryModified();
+    }
+}
 
-    bool expires = effectiveValidityPeriod();
-    if (m_data.timeInfo.expires() != expires) {
-        m_data.timeInfo.setExpires(expires);
+void Entry::setValidityPeriod(int days)
+{
+    if (days != validityPeriod()) {
+        customData()->set("ValidityPeriod", QString::number(days));
         emit entryModified();
     }
 }

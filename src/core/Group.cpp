@@ -409,13 +409,18 @@ void Group::setSearchingEnabled(TriState::State enable)
 
 void Group::setDefaultValidityPeriodEnabled(TriState::State enable)
 {
-    customData()->set("DefaultValidityPeriodEnabled", QString::number(enable));
-
+    if (enable != defaultValidityPeriodEnabled()) {
+        customData()->set("DefaultValidityPeriodEnabled", QString::number(TriState::indexFromTriState(enable)));
+        emit groupModified();
+    }
 }
 
 void Group::setDefaultValidityPeriod(int days)
 {
-    customData()->set("DefaultValidityPeriod", QString::number(days));
+    if (days != defaultValidityPeriod()) {
+        customData()->set("DefaultValidityPeriod", QString::number(days));
+        emit groupModified();
+    }
 }
 
 void Group::setLastTopVisibleEntry(Entry* entry)

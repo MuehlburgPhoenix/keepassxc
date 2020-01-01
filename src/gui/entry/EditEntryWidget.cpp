@@ -1134,6 +1134,7 @@ void EditEntryWidget::updateEntryData(Entry* entry) const
     entry->setPassword(m_mainUi->passwordEdit->text());
     entry->setExpires(m_mainUi->expireCheck->isChecked());
     entry->setValidityPeriodEnabled(TriState::triStateFromIndex(m_mainUi->validityPeriodComboBox->currentIndex()));
+    entry->setValidityPeriod(m_mainUi->validityPeriodSpinBox->value());
     entry->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
 
     entry->setNotes(m_mainUi->notesEdit->toPlainText());
@@ -1618,10 +1619,6 @@ void EditEntryWidget::handleValidityPeriodChanged(int days)
 
 void EditEntryWidget::handleValidityPeriodOnPasswordChange()
 {
-    if (!m_mainUi->expireCheck->isChecked()) {
-        return;
-    }
-
     if (m_mainUi->passwordEdit->text() != m_entry->password()) {
         TimeDelta delta = TimeDelta::fromDays(m_mainUi->validityPeriodSpinBox->value());
         m_mainUi->expireDatePicker->setDateTime(QDateTime::currentDateTime() + delta);
