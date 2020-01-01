@@ -113,6 +113,8 @@ private slots:
     void useExpiryPreset(QAction* action);
     void useValidityPeriodPreset(QAction* action);
     void handleValidityPeriodState(int index);
+    void handleValidityPeriodChanged(int days);
+    void handleValidityPeriodOnPasswordChange();
     void toggleHideNotes(bool visible);
     void pickColor();
 #ifdef WITH_XC_SSHAGENT

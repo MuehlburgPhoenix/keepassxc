@@ -149,6 +149,7 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     connect(m_mainUi->defaultPeriodPresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useValidityPeriodPreset(QAction*)));
     m_mainUi->defaultPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(group->defaultValidityPeriodEnabled()));
     connect(m_mainUi->defaultPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleDefaultPeriodState(int)));
+    connect(m_mainUi->defaultPeriodSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleDefaultPeriodChanged(int)));
 
     m_mainUi->editName->setText(m_group->name());
     m_mainUi->editNotes->setPlainText(m_group->notes());
@@ -337,4 +338,11 @@ void EditGroupWidget::handleDefaultPeriodState(int index)
     }
 
     m_mainUi->defaultPeriodSpinBox->setValue(m_group->resolveDefaultValidityPeriod());
+}
+
+void EditGroupWidget::handleDefaultPeriodChanged(int days)
+{
+    TimeDelta delta = TimeDelta::fromDays(days);
+    m_mainUi->expireCheck->setChecked(true);
+    m_mainUi->expireDatePicker->setDateTime(QDateTime::currentDateTime() + delta);
 }

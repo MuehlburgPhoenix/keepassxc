@@ -168,8 +168,9 @@ void EditEntryWidget::setupMain()
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), m_iconsWidget, SLOT(setUrl(QString)));
     m_mainUi->urlEdit->enableVerifyMode();
 #endif
-
     connect(m_mainUi->validityPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleValidityPeriodState(int)));
+    connect(m_mainUi->validityPeriodSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleValidityPeriodChanged(int)));
+    connect(m_mainUi->passwordEdit, SIGNAL(editingFinished()), this, SLOT(handleValidityPeriodOnPasswordChange()));
     connect(m_mainUi->expireCheck, SIGNAL(toggled(bool)), m_mainUi->expireDatePicker, SLOT(setEnabled(bool)));
     connect(m_mainUi->notesEnabled, SIGNAL(toggled(bool)), this, SLOT(toggleHideNotes(bool)));
     m_mainUi->passwordRepeatEdit->enableVerifyMode(m_mainUi->passwordEdit);
@@ -1603,4 +1604,28 @@ void EditEntryWidget::handleValidityPeriodState(int index)
     }
 
     m_mainUi->validityPeriodSpinBox->setValue(m_entry->effectiveValidityPeriod());
+}
+
+void EditEntryWidget::handleValidityPeriodChanged(int days)
+{
+    m_mainUi->expireCheck->setChecked(true);
+
+    if (m_mainUi->passwordEdit->text() != m_entry->password()) {
+        TimeDelta delta = TimeDelta::fromDays(days);
+        m_mainUi->expireDatePicker->setDateTime(QDateTime::currentDateTime() + delta);
+    }
+}
+
+void EditEntryWidget::handleValidityPeriodOnPasswordChange()
+{
+    if (!m_mainUi->expireCheck->isChecked()) {
+        return;
+    }
+
+    if (m_mainUi->passwordEdit->text() != m_entry->password()) {
+        TimeDelta delta = TimeDelta::fromDays(m_mainUi->validityPeriodSpinBox->value());
+        m_mainUi->expireDatePicker->setDateTime(QDateTime::currentDateTime() + delta);
+    } else {
+        m_mainUi->expireDatePicker->setDateTime(m_entry->timeInfo().expiryTime());
+    }
 }
