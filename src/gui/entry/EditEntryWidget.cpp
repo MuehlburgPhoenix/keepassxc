@@ -921,6 +921,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->passwordRepeatEdit->setText(entry->password());
     m_mainUi->expireCheck->setChecked(entry->timeInfo().expires());
     m_mainUi->validityPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(entry->validityPeriodEnabled()));
+    m_mainUi->validityPeriodSpinBox->setEnabled(entry->validityPeriodEnabled() == TriState::Enable);
     m_mainUi->expireDatePicker->setDateTime(entry->timeInfo().expiryTime().toLocalTime());
     m_mainUi->expirePresets->setEnabled(!m_history);
     m_mainUi->togglePasswordButton->setChecked(config()->get("security/passwordscleartext").toBool());

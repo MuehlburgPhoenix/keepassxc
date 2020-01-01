@@ -150,6 +150,7 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     m_mainUi->defaultPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(group->defaultValidityPeriodEnabled()));
     connect(m_mainUi->defaultPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleDefaultPeriodState(int)));
     connect(m_mainUi->defaultPeriodSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleDefaultPeriodChanged(int)));
+    m_mainUi->defaultPeriodSpinBox->setEnabled(group->defaultValidityPeriodEnabled() == TriState::Enable);
 
     m_mainUi->editName->setText(m_group->name());
     m_mainUi->editNotes->setPlainText(m_group->notes());
