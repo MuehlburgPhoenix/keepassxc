@@ -257,12 +257,12 @@ int Group::defaultValidityPeriod() const
 
     bool valid;
 
-    int defaultPeriod = customData()->value("DefaultValidityPeriod").toInt(&valid);
+    int defaultValidityPeriod = customData()->value("DefaultValidityPeriod").toInt(&valid);
     if (!valid) {
-        defaultPeriod = 0;
+        defaultValidityPeriod = 0;
     }
 
-    return defaultPeriod;
+    return defaultValidityPeriod;
 }
 
 Group::MergeMode Group::mergeMode() const

@@ -68,7 +68,7 @@
     </widget>
    </item>
    <item row="3" column="0" alignment="Qt::AlignRight">
-    <widget class="QLabel" name="defaultPeriodLabel">
+    <widget class="QLabel" name="defaultValidityPeriodLabel">
      <property name="text">
       <string>Default Period</string>
      </property>
@@ -121,7 +121,7 @@
     </spacer>
    </item>
    <item row="3" column="1">
-    <widget class="QComboBox" name="defaultPeriodComboBox">
+    <widget class="QComboBox" name="defaultValidityPeriodComboBox">
      <property name="accessibleName">
       <string>Default validity period toggle for this and sub groups</string>
      </property>
@@ -191,7 +191,7 @@
    <item row="4" column="1">
     <layout class="QHBoxLayout" name="DefaultExpirationLayout">
      <item>
-      <widget class="QLabel" name="defaultPeriodDaysLabel">
+      <widget class="QLabel" name="defaultValidityPeriodDaysLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -204,7 +204,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="defaultPeriodSpinBox">
+      <widget class="QSpinBox" name="defaultValidityPeriodSpinBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -223,7 +223,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="defaultPeriodPresets">
+      <widget class="QPushButton" name="defaultValidityPeriodPresets">
        <property name="accessibleName">
         <string>Default expiration presets</string>
        </property>
