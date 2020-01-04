@@ -148,7 +148,7 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     m_mainUi->defaultPeriodPresets->setMenu(createPresetsMenu());
     connect(m_mainUi->defaultPeriodPresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useValidityPeriodPreset(QAction*)));
     m_mainUi->defaultPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(group->defaultValidityPeriodEnabled()));
-    connect(m_mainUi->defaultPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleDefaultPeriodEnabled(int)));
+    connect(m_mainUi->defaultPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleDefaultPeriodTriState(int)));
     m_mainUi->defaultPeriodSpinBox->setEnabled(group->defaultValidityPeriodEnabled() == TriState::Enable);
 
     m_mainUi->editName->setText(m_group->name());
@@ -331,7 +331,7 @@ QMenu* EditGroupWidget::createPresetsMenu()
     return expirePresetsMenu;
 }
 
-void EditGroupWidget::handleDefaultPeriodEnabled(int index)
+void EditGroupWidget::handleDefaultPeriodTriState(int index)
 {
     if (index == TriState::indexFromTriState(TriState::Enable)) {
         m_mainUi->defaultPeriodSpinBox->setEnabled(true);

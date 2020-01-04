@@ -168,9 +168,9 @@ void EditEntryWidget::setupMain()
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), m_iconsWidget, SLOT(setUrl(QString)));
     m_mainUi->urlEdit->enableVerifyMode();
 #endif
-    connect(m_mainUi->validityPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleValidityPeriodState(int)));
+    connect(m_mainUi->validityPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleValidityPeriodTriState(int)));
     connect(m_mainUi->validityPeriodSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleValidityPeriodChanged(int)));
-    connect(m_mainUi->passwordEdit, SIGNAL(editingFinished()), this, SLOT(handleValidityPeriodOnPasswordChange()));
+    connect(m_mainUi->passwordEdit, SIGNAL(textChanged(QString)), this, SLOT(handleValidityPeriodOnPasswordChange()));
     connect(m_mainUi->expireCheck, SIGNAL(toggled(bool)), m_mainUi->expireDatePicker, SLOT(setEnabled(bool)));
     connect(m_mainUi->notesEnabled, SIGNAL(toggled(bool)), this, SLOT(toggleHideNotes(bool)));
     m_mainUi->passwordRepeatEdit->enableVerifyMode(m_mainUi->passwordEdit);
@@ -919,7 +919,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->urlEdit->setText(entry->url());
     m_mainUi->passwordEdit->setText(entry->password());
     m_mainUi->passwordRepeatEdit->setText(entry->password());
-    m_mainUi->expireCheck->setChecked(entry->timeInfo().expires());
+    m_mainUi->expireCheck->setChecked(entry->timeInfo().expires() || entry->effectiveValidityPeriodEnabled());
     m_mainUi->validityPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(entry->validityPeriodEnabled()));
     m_mainUi->validityPeriodSpinBox->setEnabled(entry->validityPeriodEnabled() == TriState::Enable);
     m_mainUi->expireDatePicker->setDateTime(entry->timeInfo().expiryTime().toLocalTime());
@@ -1597,7 +1597,7 @@ void EditEntryWidget::addTriStateItems(QComboBox* comboBox, bool inheritDefault)
     comboBox->addItem(tr("Disable"));
 }
 
-void EditEntryWidget::handleValidityPeriodState(int index)
+void EditEntryWidget::handleValidityPeriodTriState(int index)
 {
     if (index == TriState::indexFromTriState(TriState::Enable)) {
         m_mainUi->validityPeriodSpinBox->setEnabled(true);
