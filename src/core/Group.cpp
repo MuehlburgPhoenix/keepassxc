@@ -257,7 +257,7 @@ int Group::defaultValidityPeriod() const
 
     bool valid;
 
-    int defaultPeriod = customData()->value("ValidityPeriod").toInt(&valid);
+    int defaultPeriod = customData()->value("DefaultValidityPeriod").toInt(&valid);
     if (!valid) {
         defaultPeriod = 0;
     }
