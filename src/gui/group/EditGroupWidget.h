@@ -73,8 +73,7 @@ private slots:
 
 private slots:
     void useValidityPeriodPreset(QAction* action);
-    void handleDefaultPeriodState(int index);
-    void handleDefaultPeriodChanged(int days);
+    void handleDefaultPeriodEnabled(int index);
 
 private:
     void addTriStateItems(QComboBox* comboBox, bool inheritValue);

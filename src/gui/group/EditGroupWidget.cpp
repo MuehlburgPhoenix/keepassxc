@@ -148,8 +148,7 @@ void EditGroupWidget::loadGroup(Group* group, bool create, const QSharedPointer<
     m_mainUi->defaultPeriodPresets->setMenu(createPresetsMenu());
     connect(m_mainUi->defaultPeriodPresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useValidityPeriodPreset(QAction*)));
     m_mainUi->defaultPeriodComboBox->setCurrentIndex(TriState::indexFromTriState(group->defaultValidityPeriodEnabled()));
-    connect(m_mainUi->defaultPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleDefaultPeriodState(int)));
-    connect(m_mainUi->defaultPeriodSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleDefaultPeriodChanged(int)));
+    connect(m_mainUi->defaultPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleDefaultPeriodEnabled(int)));
     m_mainUi->defaultPeriodSpinBox->setEnabled(group->defaultValidityPeriodEnabled() == TriState::Enable);
 
     m_mainUi->editName->setText(m_group->name());
@@ -332,7 +331,7 @@ QMenu* EditGroupWidget::createPresetsMenu()
     return expirePresetsMenu;
 }
 
-void EditGroupWidget::handleDefaultPeriodState(int index)
+void EditGroupWidget::handleDefaultPeriodEnabled(int index)
 {
     if (index == TriState::indexFromTriState(TriState::Enable)) {
         m_mainUi->defaultPeriodSpinBox->setEnabled(true);
@@ -341,11 +340,4 @@ void EditGroupWidget::handleDefaultPeriodState(int index)
     }
 
     m_mainUi->defaultPeriodSpinBox->setValue(m_group->resolveDefaultValidityPeriod());
-}
-
-void EditGroupWidget::handleDefaultPeriodChanged(int days)
-{
-    TimeDelta delta = TimeDelta::fromDays(days);
-    m_mainUi->expireCheck->setChecked(true);
-    m_mainUi->expireDatePicker->setDateTime(QDateTime::currentDateTime() + delta);
 }
