@@ -1116,7 +1116,7 @@ void Entry::setGroup(Group* group)
     }
 }
 
-void Entry::setGroupTemporarily(Group* group)
+void Entry::setTemporaryGroup(Group* group)
 {
     Q_ASSERT(group);
 
@@ -1145,6 +1145,12 @@ void Entry::setGroupTemporarily(Group* group)
     m_committedToGroup = false;
 
     QObject::setParent(group);
+}
+
+void Entry::unsetTemporaryGroup() {
+    if (!m_committedToGroup) {
+        m_temporaryGroup = nullptr;
+    }
 }
 
 void Entry::emitDataChanged()

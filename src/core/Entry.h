@@ -227,7 +227,8 @@ public:
     Group* group();
     const Group* group() const;
     void setGroup(Group* group);
-    void setGroupTemporarily(Group* group);
+    void setTemporaryGroup(Group* group);
+    void unsetTemporaryGroup();
     const Database* database() const;
     Database* database();
 
