@@ -63,7 +63,9 @@ Entry::~Entry()
 {
     setUpdateTimeinfo(false);
     if (m_group) {
-        m_group->removeEntry(this);
+        if (m_group->entries().contains(this)) {
+            m_group->removeEntry(this);
+        }
 
         if (m_group->database()) {
             m_group->database()->addDeletedObject(m_uuid);
@@ -1077,12 +1079,11 @@ void Entry::setGroup(Group* group)
 {
     Q_ASSERT(group);
 
-    if (m_group == group) {
-        return;
-    }
-
     if (m_group) {
-        m_group->removeEntry(this);
+        if (m_group->entries().contains(this)) {
+            m_group->removeEntry(this);
+        }
+
         if (m_group->database() && m_group->database() != group->database()) {
             m_group->database()->addDeletedObject(m_uuid);
 
@@ -1109,8 +1110,15 @@ void Entry::setGroupTemporarily(Group* group)
 {
     Q_ASSERT(group);
 
+    if (m_group == group) {
+        return;
+    }
+
     if (m_group) {
-        m_group->removeEntry(this);
+        if (m_group->entries().contains(this)) {
+            m_group->removeEntry(this);
+        }
+
         if (m_group->database() && m_group->database() != group->database()) {
             m_group->database()->addDeletedObject(m_uuid);
 

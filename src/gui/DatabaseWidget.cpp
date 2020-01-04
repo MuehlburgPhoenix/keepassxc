@@ -911,6 +911,7 @@ void DatabaseWidget::switchToEntryEdit(Entry* entry, bool create)
     Group* group;
     if (create) {
         group = currentGroup();
+        entry->setGroupTemporarily(currentGroup());
     } else {
         group = entry->group();
         // Ensure we have only this entry selected
