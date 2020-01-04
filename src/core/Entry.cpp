@@ -1147,7 +1147,8 @@ void Entry::setTemporaryGroup(Group* group)
     QObject::setParent(group);
 }
 
-void Entry::unsetTemporaryGroup() {
+void Entry::unsetTemporaryGroup()
+{
     if (!m_committedToGroup) {
         m_temporaryGroup = nullptr;
     }

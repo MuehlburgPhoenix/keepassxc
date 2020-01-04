@@ -168,7 +168,10 @@ void EditEntryWidget::setupMain()
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), m_iconsWidget, SLOT(setUrl(QString)));
     m_mainUi->urlEdit->enableVerifyMode();
 #endif
-    connect(m_mainUi->validityPeriodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleValidityPeriodTriState(int)));
+    connect(m_mainUi->validityPeriodComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            this,
+            SLOT(handleValidityPeriodTriState(int)));
     connect(m_mainUi->validityPeriodSpinBox, SIGNAL(valueChanged(int)), this, SLOT(handleValidityPeriodChanged(int)));
     connect(m_mainUi->passwordEdit, SIGNAL(textChanged(QString)), this, SLOT(handleValidityPeriodOnPasswordChange()));
     connect(m_mainUi->expireCheck, SIGNAL(toggled(bool)), m_mainUi->expireDatePicker, SLOT(setEnabled(bool)));
@@ -177,7 +180,10 @@ void EditEntryWidget::setupMain()
     connect(m_mainUi->passwordGenerator, SIGNAL(appliedPassword(QString)), SLOT(setGeneratedPassword(QString)));
 
     m_mainUi->validityPeriodPresets->setMenu(createPresetsMenu());
-    connect(m_mainUi->validityPeriodPresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useValidityPeriodPreset(QAction*)));
+    connect(m_mainUi->validityPeriodPresets->menu(),
+            SIGNAL(triggered(QAction*)),
+            this,
+            SLOT(useValidityPeriodPreset(QAction*)));
 
     m_mainUi->expirePresets->setMenu(createPresetsMenu());
     connect(m_mainUi->expirePresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useExpiryPreset(QAction*)));
