@@ -25,6 +25,7 @@
 #include <QCheckBox>
 #include <QClipboard>
 #include <QComboBox>
+#include <QDateTimeEdit>
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QLabel>
@@ -752,6 +753,8 @@ void TestGui::testDicewareEntryEntropy()
 
 void TestGui::testValidityPeriod()
 {
+    const int validityPeriod = 1;
+
     // Find buttons for group creation
     auto* editGroupWidget = m_dbWidget->findChild<EditGroupWidget*>("editGroupWidget");
     auto* nameEdit = editGroupWidget->findChild<QLineEdit*>("editName");
@@ -761,8 +764,9 @@ void TestGui::testValidityPeriod()
     m_dbWidget->groupView()->setCurrentGroup(m_db->rootGroup());
     m_dbWidget->createGroup();
     QTest::keyClicks(nameEdit, "WithPeriod");
-    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")->setCurrentIndex(TriState::indexFromTriState(TriState::Enable));
-    editGroupWidget->findChild<QSpinBox*>("defaultValidityPeriodSpinBox")->setValue(1);
+    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")
+        ->setCurrentIndex(TriState::indexFromTriState(TriState::Enable));
+    editGroupWidget->findChild<QSpinBox*>("defaultValidityPeriodSpinBox")->setValue(validityPeriod);
     QTest::mouseClick(editGroupWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
     m_dbWidget->groupView()->setCurrentGroup(m_db->rootGroup());
     Group* enabledGroup = m_db->rootGroup()->findGroupByPath("WithPeriod");
@@ -770,7 +774,8 @@ void TestGui::testValidityPeriod()
     m_dbWidget->groupView()->setCurrentGroup(enabledGroup);
     m_dbWidget->createGroup();
     QTest::keyClicks(nameEdit, "InheritFromWithPeriod");
-    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")->setCurrentIndex(TriState::indexFromTriState(TriState::Inherit));
+    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")
+        ->setCurrentIndex(TriState::indexFromTriState(TriState::Inherit));
     QTest::mouseClick(editGroupWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
     Group* inheritFromEnabledGroup = m_db->rootGroup()->findGroupByPath("WithPeriod/InheritFromWithPeriod");
     QVERIFY(inheritFromEnabledGroup);
@@ -780,7 +785,8 @@ void TestGui::testValidityPeriod()
     m_dbWidget->groupView()->setCurrentGroup(m_db->rootGroup());
     m_dbWidget->createGroup();
     QTest::keyClicks(nameEdit, "WithoutPeriod");
-    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")->setCurrentIndex(TriState::indexFromTriState(TriState::Disable));
+    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")
+        ->setCurrentIndex(TriState::indexFromTriState(TriState::Disable));
     QTest::mouseClick(editGroupWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
     m_dbWidget->groupView()->setCurrentGroup(m_db->rootGroup());
     Group* disabledGroup = m_db->rootGroup()->findGroupByPath("WithoutPeriod");
@@ -788,7 +794,8 @@ void TestGui::testValidityPeriod()
     m_dbWidget->groupView()->setCurrentGroup(disabledGroup);
     m_dbWidget->createGroup();
     QTest::keyClicks(nameEdit, "InheritFromWithoutPeriod");
-    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")->setCurrentIndex(TriState::indexFromTriState(TriState::Inherit));
+    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")
+        ->setCurrentIndex(TriState::indexFromTriState(TriState::Inherit));
     QTest::mouseClick(editGroupWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
     Group* inheritFromDisabledGroup = m_db->rootGroup()->findGroupByPath("WithoutPeriod/InheritFromWithoutPeriod");
     QVERIFY(inheritFromDisabledGroup);
@@ -798,7 +805,8 @@ void TestGui::testValidityPeriod()
     m_dbWidget->groupView()->setCurrentGroup(m_db->rootGroup());
     m_dbWidget->createGroup();
     QTest::keyClicks(nameEdit, "WithInheritedPeriod");
-    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")->setCurrentIndex(TriState::indexFromTriState(TriState::Inherit));
+    editGroupWidget->findChild<QComboBox*>("defaultValidityPeriodComboBox")
+        ->setCurrentIndex(TriState::indexFromTriState(TriState::Inherit));
     QTest::mouseClick(editGroupWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
     Group* inheritFromDefault = m_db->rootGroup()->findGroupByPath("WithInheritedPeriod");
     QVERIFY(inheritFromDefault);
@@ -810,22 +818,33 @@ void TestGui::testValidityPeriod()
     auto* titleEdit = editEntryWidget->findChild<QLineEdit*>("titleEdit");
     auto* editEntryWidgetButtonBox = editEntryWidget->findChild<QDialogButtonBox*>("buttonBox");
 
+    QDateTime expiryDateBeforePasswordChange;
+    QDateTime expiryDateAfterPasswordChange;
+
     // Create "WithExpiryDate" in "WithPeriod"
     m_dbWidget->groupView()->setCurrentGroup(enabledGroup);
     QTest::mouseClick(entryNewWidget, Qt::LeftButton);
     QTest::keyClicks(titleEdit, "WithExpiryDate");
+    QVERIFY(editEntryWidget->findChild<QSpinBox*>("validityPeriodSpinBox")->value() == validityPeriod);
+    expiryDateBeforePasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordEdit"), "Very new password");
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"), "Very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked());
+    expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
+    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange)
+            == editEntryWidget->findChild<QSpinBox*>("validityPeriodSpinBox")->value());
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Create "WithoutExpiryDate" in "WithoutPeriod"
     m_dbWidget->groupView()->setCurrentGroup(disabledGroup);
     QTest::mouseClick(entryNewWidget, Qt::LeftButton);
     QTest::keyClicks(titleEdit, "WithoutExpiryDate");
+    expiryDateBeforePasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordEdit"), "Very, very new password");
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"), "Very, very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked() == false);
+    expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
+    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange) == 0);
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Create "WithoutInheritedPeriod" in "WithInheritedPeriod" where root group
@@ -833,27 +852,41 @@ void TestGui::testValidityPeriod()
     m_dbWidget->groupView()->setCurrentGroup(inheritFromDefault);
     QTest::mouseClick(entryNewWidget, Qt::LeftButton);
     QTest::keyClicks(titleEdit, "WithoutInheritedExpiryDate");
+    expiryDateBeforePasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordEdit"), "Very, very, very new password");
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"), "Very, very, very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked() == false);
+    expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
+    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange) == 0);
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Create "InheritFromEnabled" in "WithPeriod/InheritFromWithPeriod"
     m_dbWidget->groupView()->setCurrentGroup(inheritFromEnabledGroup);
     QTest::mouseClick(entryNewWidget, Qt::LeftButton);
     QTest::keyClicks(titleEdit, "WithInheritedExpiryDate");
+    QVERIFY(editEntryWidget->findChild<QSpinBox*>("validityPeriodSpinBox")->value() == validityPeriod);
+    expiryDateBeforePasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordEdit"), "Very, very, very, very new password");
-    QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"), "Very, very, very, very new password");
+    QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"),
+                     "Very, very, very, very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked());
+    expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
+    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange)
+            == editEntryWidget->findChild<QSpinBox*>("validityPeriodSpinBox")->value());
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Create "InheritFromDisabled" in "WithoutPeriod/InheritFromWithoutPeriod"
     m_dbWidget->groupView()->setCurrentGroup(inheritFromDisabledGroup);
     QTest::mouseClick(entryNewWidget, Qt::LeftButton);
     QTest::keyClicks(titleEdit, "WithoutInheritedExpiryDate");
-    QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordEdit"), "Very, very, very, very, very new password");
-    QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"), "Very, very, very, very, very new password");
+    expiryDateBeforePasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
+    QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordEdit"),
+                     "Very, very, very, very, very new password");
+    QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"),
+                     "Very, very, very, very, very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked() == false);
+    expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
+    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange) == 0);
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 }
 
