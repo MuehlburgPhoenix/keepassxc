@@ -693,6 +693,11 @@ void TestGui::testPasswordEntryEntropy()
     QTest::keyClicks(editNewPassword, "Bs5ZFfthWzR8DGFEjaCM6bGqhmCT4km");
     QCOMPARE(entropyLabel->text(), QString("Entropy: 174.59 bit"));
     QCOMPARE(strengthLabel->text(), QString("Password Quality: Excellent"));
+
+    // Close without saving
+    auto* editEntryWidgetButtonBox = editEntryWidget->findChild<QDialogButtonBox*>("buttonBox");
+    MessageBox::setNextAnswer(MessageBox::Discard);
+    QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Cancel), Qt::LeftButton);
 }
 
 void TestGui::testDicewareEntryEntropy()
@@ -737,6 +742,11 @@ void TestGui::testDicewareEntryEntropy()
 
     QCOMPARE(entropyLabel->text(), QString("Entropy: 77.55 bit"));
     QCOMPARE(strengthLabel->text(), QString("Password Quality: Good"));
+
+    // Close without saving
+    auto* editEntryWidgetButtonBox = editEntryWidget->findChild<QDialogButtonBox*>("buttonBox");
+    MessageBox::setNextAnswer(MessageBox::Discard);
+    QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Cancel), Qt::LeftButton);
 }
 
 void TestGui::testTotp()
