@@ -269,6 +269,8 @@ private:
     QScopedPointer<Entry> m_tmpHistoryItem;
     bool m_modifiedSinceBegin;
     QPointer<Group> m_group;
+    QPointer<Group> m_temporaryGroup;
+    bool m_committedToGroup;
     bool m_updateTimeinfo;
 };
 

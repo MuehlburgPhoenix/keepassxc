@@ -42,6 +42,7 @@ Entry::Entry()
     , m_autoTypeAssociations(new AutoTypeAssociations(this))
     , m_customData(new CustomData(this))
     , m_modifiedSinceBegin(false)
+    , m_committedToGroup(false)
     , m_updateTimeinfo(true)
 {
     m_data.iconNumber = DefaultIconNumber;
@@ -1067,11 +1068,19 @@ QString Entry::referenceFieldValue(EntryReferenceType referenceType) const
 
 Group* Entry::group()
 {
+    if (!m_committedToGroup) {
+        return nullptr;
+    }
+
     return m_group;
 }
 
 const Group* Entry::group() const
 {
+    if (!m_committedToGroup) {
+        return nullptr;
+    }
+
     return m_group;
 }
 
@@ -1098,6 +1107,7 @@ void Entry::setGroup(Group* group)
 
     m_group = group;
     group->addEntry(this);
+    m_committedToGroup = true;
 
     QObject::setParent(group);
 
@@ -1132,6 +1142,7 @@ void Entry::setGroupTemporarily(Group* group)
     }
 
     m_group = group;
+    m_committedToGroup = false;
 
     QObject::setParent(group);
 }
