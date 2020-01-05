@@ -844,7 +844,7 @@ void TestGui::testValidityPeriod()
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"), "Very, very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked() == false);
     expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
-    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange) == 0);
+    QVERIFY(expiryDateBeforePasswordChange.secsTo(expiryDateAfterPasswordChange) == 0);
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Create "WithoutInheritedPeriod" in "WithInheritedPeriod" where root group
@@ -857,7 +857,7 @@ void TestGui::testValidityPeriod()
     QTest::keyClicks(editEntryWidget->findChild<QLineEdit*>("passwordRepeatEdit"), "Very, very, very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked() == false);
     expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
-    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange) == 0);
+    QVERIFY(expiryDateBeforePasswordChange.secsTo(expiryDateAfterPasswordChange) == 0);
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Create "InheritFromEnabled" in "WithPeriod/InheritFromWithPeriod"
@@ -886,7 +886,7 @@ void TestGui::testValidityPeriod()
                      "Very, very, very, very, very new password");
     QVERIFY(editEntryWidget->findChild<QCheckBox*>("expireCheck")->isChecked() == false);
     expiryDateAfterPasswordChange = editEntryWidget->findChild<QDateTimeEdit*>("expireDatePicker")->dateTime();
-    QVERIFY(expiryDateBeforePasswordChange.daysTo(expiryDateAfterPasswordChange) == 0);
+    QVERIFY(expiryDateBeforePasswordChange.secsTo(expiryDateAfterPasswordChange) == 0);
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 }
 
