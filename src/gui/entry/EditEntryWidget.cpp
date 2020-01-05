@@ -1639,6 +1639,10 @@ void EditEntryWidget::handleValidityPeriodOnPasswordChange()
         return;
     }
 
+    if (!m_entry->effectiveValidityPeriodEnabled()) {
+        return;
+    }
+
     if (m_mainUi->passwordEdit->text() != m_entry->password()) {
         TimeDelta delta = TimeDelta::fromDays(m_mainUi->validityPeriodSpinBox->value());
         m_mainUi->expireDatePicker->setDateTime(QDateTime::currentDateTime() + delta);
