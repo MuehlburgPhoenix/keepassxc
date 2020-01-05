@@ -223,16 +223,11 @@ void EntryAttributes::copyCustomKeysFrom(const EntryAttributes* other)
 bool EntryAttributes::areCustomKeysDifferent(const EntryAttributes* other)
 {
     // check if they are equal ignoring the order of the keys
-    const QList<QString> keyList = keys();
-    const QSet<QString> keys = QSet<QString>(keyList.begin(), keyList.end());
-
-    const QList<QString> otherKeyList = other->keys();
-    const QSet<QString> otherKeys = QSet<QString>(otherKeyList.begin(), otherKeyList.end());
-
-    if (keys != otherKeys) {
+    if (keys().toSet() != other->keys().toSet()) {
         return true;
     }
 
+    const QList<QString> keyList = keys();
     for (const QString& key : keyList) {
         if (isDefaultAttribute(key)) {
             continue;

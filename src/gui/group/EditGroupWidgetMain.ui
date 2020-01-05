@@ -241,6 +241,9 @@
   <tabstop>editNotes</tabstop>
   <tabstop>expireCheck</tabstop>
   <tabstop>expireDatePicker</tabstop>
+  <tabstop>defaultValidityPeriodComboBox</tabstop>
+  <tabstop>defaultValidityPeriodSpinBox</tabstop>
+  <tabstop>defaultValidityPeriodPresets</tabstop>
   <tabstop>searchComboBox</tabstop>
   <tabstop>autotypeComboBox</tabstop>
  </tabstops>

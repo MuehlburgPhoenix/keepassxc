@@ -313,8 +313,8 @@ void AutoType::performGlobalAutoType(const QList<QSharedPointer<Database>>& dbLi
     for (const auto& db : dbList) {
         const QList<Entry*> dbEntries = db->rootGroup()->entriesRecursive();
         for (Entry* entry : dbEntries) {
-            const QList<QString> sequences = autoTypeSequences(entry, m_windowTitleForGlobal);
-            for (const QString& sequence : QSet<QString>(sequences.begin(), sequences.end())) {
+            const QSet<QString> sequences = autoTypeSequences(entry, m_windowTitleForGlobal).toSet();
+            for (const QString& sequence : sequences) {
                 if (!sequence.isEmpty()) {
                     matchList << AutoTypeMatch(entry, sequence);
                 }

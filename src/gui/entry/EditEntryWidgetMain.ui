@@ -326,6 +326,10 @@
   <tabstop>togglePasswordGeneratorButton</tabstop>
   <tabstop>urlEdit</tabstop>
   <tabstop>fetchFaviconButton</tabstop>
+  <tabstop>validityPeriodComboBox</tabstop>
+  <tabstop>validityPeriodSpinBox</tabstop>
+  <tabstop>validityPeriodPresets</tabstop>
+  <tabstop>expireCheck</tabstop>
   <tabstop>expireDatePicker</tabstop>
   <tabstop>expirePresets</tabstop>
   <tabstop>notesEnabled</tabstop>
